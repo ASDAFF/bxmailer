@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<phpunit bootstrap="tests/bootstrap.php"
+    colors="true"
+    beStrictAboutTestSize="true"
+    beStrictAboutTestsThatDoNotTestAnything="true">
+
+    <testsuites>
+        <testsuite name="Bxmailer Test Suite">
+            <directory>tests/lib</directory>
+        </testsuite>
+    </testsuites>
+
+    <filter>
+        <whitelist>
+            <directory>marvin255.bxmailer/lib</directory>
+            <exclude>
+                <file>marvin255.bxmailer/lib/Autoloader.php</file>
+            </exclude>
+        </whitelist>
+    </filter>
+</phpunit>

@@ -28,13 +28,17 @@ class Mailer
      * Возвращает объект singleton, если он уже создан, либо создает новый
      * и возвращает новый.
      *
+     * @param bool $refresh Флаг, который обозначает, что нужно создать новый объект
+     *
      * @return \marvin255\bxmailer\Mailer
      */
-    public static function getInstance()
+    public static function getInstance($refresh = false)
     {
-        return self::$instance
-            ? self::$instance = new self
-            : self::$instance;
+        if (self::$instance === null || $refresh) {
+            self::$instance = new self;
+        }
+
+        return self::$instance;
     }
 
     /**
@@ -53,17 +57,12 @@ class Mailer
      */
     public function send(MessageInterface $message)
     {
-        $options = $this->getOptions();
         $handler = $this->getHandler();
 
         try {
             $res = $handler->send($message);
-        } catch (\Eception $e) {
-            $this->logException(
-                $e,
-                'bxmailer_send_error',
-                get_class($handler) . '::send'
-            );
+        } catch (\Exception $e) {
+            $this->logException($e, 'send_error', get_class($handler) . '::send');
             $res = false;
         }
 
@@ -86,10 +85,8 @@ class Mailer
      */
     public function setHandler(HandlerInterface $handler)
     {
-        $this->handler = $this->setOptionsToHandler(
-            $handler,
-            $this->getOptions()
-        );
+        $handler = $this->setOptionsToHandler($handler, $this->getOptions());
+        $this->handler = $handler;
 
         return $this;
     }
@@ -136,35 +133,6 @@ class Mailer
     }
 
     /**
-     * Флаг, который указывает, что mailer подключен в битрикс.
-     *
-     * @var bool
-     */
-    protected $isRan = false;
-
-    /**
-     * Задает флаг, что mailer подключен к битриксу.
-     *
-     * @return \marvin255\bxmailer\Mailer
-     */
-    public function isRan()
-    {
-        $this->isRan = true;
-
-        return $this;
-    }
-
-    /**
-     * Возвращает значение флага о том, подключен mailer к битриксу или нет.
-     *
-     * @return bool
-     */
-    public function getIsRan()
-    {
-        return $this->isRan;
-    }
-
-    /**
      * Настраивает объект обработчика с помощью опций из второго массива.
      *
      * При установке ищет либо public свойство обработчика с соответствующим именем.
@@ -182,7 +150,7 @@ class Mailer
             if (property_exists($handler, $name)) {
                 $handler->$name = $value;
             } elseif (method_exists($handler, $setterName)) {
-                $handler->$setterName = $value;
+                $handler->$setterName($value);
             }
         }
 
@@ -198,11 +166,11 @@ class Mailer
      *
      * @return \Exception
      */
-    protected function logException(\Exception $e, $type = 'bxmailer_error', $item = '\marvin255\bxmailer\Mailer::send')
+    protected function logException(\Exception $e, $type = 'error', $item = '\marvin255\bxmailer\Mailer::send')
     {
-        CEventLog::Add([
+        CEventLog::add([
             'SEVERITY' => 'ERROR',
-            'AUDIT_TYPE_ID' => $type,
+            'AUDIT_TYPE_ID' => 'bxmailer_' . $type,
             'MODULE_ID' => 'marvin255.bxmailer',
             'ITEM_ID' => $item,
             'DESCRIPTION' => json_encode([

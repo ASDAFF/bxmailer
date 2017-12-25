@@ -10,7 +10,7 @@
     },
     "autoload": {
         "psr-4": {
-            "marvin255\\bxmailer\\tests\\": "tests/",
+            "marvin255\\bxmailer\\tests\\": "tests/lib/",
             "marvin255\\bxmailer\\installer\\": "installer/"
         }
     },

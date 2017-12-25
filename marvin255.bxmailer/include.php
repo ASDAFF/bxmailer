@@ -41,5 +41,4 @@ if (!function_exists('custom_mail')) {
             $additional_parameters
         ));
     }
-    $mailer->isRan();
 }
