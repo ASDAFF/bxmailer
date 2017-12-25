@@ -45,44 +45,20 @@ class Mailer
     }
 
     /**
-     * Отправляет письмо с теми данными, которые битрикс отправляет в bxmail.
+     * Отправляет письмо с теми данными, которые описаны в объекте сообщения.
      *
-     * Разбирает те данные, что прислал битрикс в массив и отправляет в обработчик.
-     *
-     * @param string $to
-     * @param string $subject
-     * @param string $message
-     * @param string $additionalHeaders
-     * @param string $additionalParameter
+     * @param \marvin255\bxmailer\MessageInterface $message
      *
      * @return bool
      */
-    public function send($to, $subject, $message, $additionalHeaders, $additionalParameter)
+    public function send(MessageInterface $message)
     {
         $options = $this->getOptions();
         $handler = $this->getHandler();
 
-        //разбираем адресатов письма в массив
-        $to = array_map('trim', explode(',', $to));
-
-        //разбираем заголовки в массив
-        $headers = [];
-        if (!empty($additionalHeaders)) {
-            $explodeHeaders = explode("\n", $headers);
-            foreach ($explodeHeaders as $strHeader) {
-                if (preg_match('/^([^\:]+)\:(.*)$/', $strHeader, $matches)) {
-                    $key = trim($matches[1]);
-                    $value = trim($matches[2]);
-                    $headers[$key] = $value;
-                }
-            }
-        }
-
-        //отправляем письмо
         try {
-            $res = $handler->send($to, $subject, $message, $headers);
+            $res = $handler->send($message);
         } catch (\Eception $e) {
-            //логируем исключение и возвращаем false
             $this->logException(
                 $e,
                 'bxmailer_send_error',

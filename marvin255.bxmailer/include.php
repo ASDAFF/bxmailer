@@ -5,6 +5,7 @@ use Bitrix\Main\Config\Option;
 use marvin255\bxmailer\Exception;
 use marvin255\bxmailer\Mailer;
 use marvin255\bxmailer\handler\PhpMailer;
+use marvin255\bxmailer\message\Bxmail;
 
 //получаем от битрикса исходные данные
 $moduleId = 'marvin255.bxmailer';
@@ -32,13 +33,13 @@ if (!$mailer->getHandler()) {
 if (!function_exists('custom_mail')) {
     function custom_mail($to, $subject, $message, $additional_headers, $additional_parameters)
     {
-        return Mailer::getInstance()->send(
+        return Mailer::getInstance()->send(new Bxmail(
             $to,
             $subject,
             $message,
             $additional_headers,
             $additional_parameters
-        );
+        ));
     }
     $mailer->isRan();
 }
