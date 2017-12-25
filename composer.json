@@ -1,0 +1,26 @@
+{
+    "name": "marvin255/bxmailer",
+    "description": "",
+    "type": "library",
+    "keywords": ["php", "bitrix", "phpmailer"],
+    "license": "MIT",
+    "require": {
+        "php": ">=5.4.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "marvin255\\bxmailer\\tests\\": "tests/",
+            "marvin255\\bxmailer\\installer\\": "installer/"
+        }
+    },
+    "require-dev": {
+        "phpunit/phpunit": "<=5.0",
+        "friendsofphp/php-cs-fixer": "<2.6.0"
+    },
+    "repositories": [
+        {
+            "type": "git",
+            "url": "https://github.com/marvin255/bxmailer"
+        }
+    ]
+}
