@@ -4,7 +4,7 @@ use Bitrix\Main\Event;
 use Bitrix\Main\Config\Option;
 use marvin255\bxmailer\Exception;
 use marvin255\bxmailer\Mailer;
-use marvin255\bxmailer\PhpMailer;
+use marvin255\bxmailer\handler\PhpMailer;
 
 //получаем от битрикса исходные данные
 $moduleId = 'marvin255.bxmailer';
