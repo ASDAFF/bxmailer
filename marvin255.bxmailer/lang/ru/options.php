@@ -13,6 +13,10 @@ $MESS['MARVIN255_BXMAILER_PREFERENCIES_SMTP_AUTH'] = 'Использовать �
 $MESS['MARVIN255_BXMAILER_PRESENTED_BY_PHPMAILER'] = 'В основе модуля лежит библиотека <a href="https://github.com/PHPMailer/PHPMailer">phpMailer</a>.'
     . ' Автор модуля выражает огромную признательность сообществу phpMailer.';
 
+$MESS['MARVIN255_BXMAILER_MODULE_IS_UNPLUGGED'] = '<b>Отправка писем через модуль не настроена</b><br>'
+    . '<div style="font-weight: normal;">Убедитесь, что в вашем init.php прописано подключение модуля:<br>'
+    . '\\Bitrix\\Main\\Loader::includeModule(\'marvin255.bxmailer\');</div>';
+
 $MESS['MARVIN255_BXMAILER_SMTP'] = '<b>Настройка smtp mail.ru:</b><br>'
     . 'Хост для smtp: smtp.mail.ru<br>'
     . 'Тип шифрования для smtp: ssl<br>'

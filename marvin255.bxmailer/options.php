@@ -54,7 +54,19 @@ if ((!empty($save) || !empty($restore)) && $request->isPost() && check_bitrix_se
     }
     $isConfigComplete = true;
 }
+?>
 
+<?php
+    if (!defined('MARVIN255_BXMAILER_IS_CUSTOM_MAIL_SET')) {
+        echo CAdminMessage::ShowMessage([
+            'MESSAGE' => Loc::getMessage('MARVIN255_BXMAILER_MODULE_IS_UNPLUGGED'),
+            'HTML' => true,
+            'TYPE' => 'ERROR',
+        ]);
+    }
+?>
+
+<?php
 $tabControl->begin();
 ?>
 
