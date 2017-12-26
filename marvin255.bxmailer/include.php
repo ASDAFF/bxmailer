@@ -34,7 +34,7 @@ if (!$mailer->getHandler()) {
     if (!class_exists('\PHPMailer\PHPMailer\PHPMailer')) {
         AutoloaderPhpMailer::register(__DIR__ . '/phpmailer');
     }
-    $mailer->setHandler(new PhpMailerHandler(new PHPMailer));
+    $mailer->setHandler(new PhpMailerHandler(new PHPMailer(true)));
 }
 
 //определяем в модуле кастомную функцию для отправки писем
