@@ -106,11 +106,19 @@ class PhpMailer implements HandlerInterface
         }
 
         $return = false;
+        if (function_exists('mb_internal_encoding') && ((int) ini_get('mbstring.func_overload')) & 2) {
+            $mbEncoding = mb_internal_encoding();
+            mb_internal_encoding('ASCII');
+        }
 
         try {
             $return = $this->setMessageSettings($this->mailer, $message)->send();
         } catch (\PHPMailer\PHPMailer\Exception $e) {
             $return = false;
+        } finally {
+            if (isset($mbEncoding)) {
+                mb_internal_encoding($mbEncoding);
+            }
         }
 
         if (!$return) {
