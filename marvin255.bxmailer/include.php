@@ -41,4 +41,5 @@ if (!function_exists('custom_mail')) {
             $additional_parameters
         ));
     }
+    define('MARVIN255_BXMAILER_IS_CUSTOM_MAIL_SET', true);
 }
