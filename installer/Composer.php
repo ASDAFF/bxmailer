@@ -38,26 +38,18 @@ class Composer
      */
     protected static function getInstallingFoldersPathes(Event $event)
     {
-        $libFolder = self::getLibraryFolder($event);
+        $libFolder = self::getLibraryFolder($event, self::$vendor, self::$module);
+        $libFolder .= '/' . self::$vendor . '.' . self::$module;
+
+        $phpMailerFolder = self::getLibraryFolder($event, 'phpmailer', 'phpmailer');
+        $phpMailerFolder .= '/src';
+
         $modulesFolder = self::getModulesFolder($event);
 
         return [
             $libFolder => $modulesFolder . '/' . self::$vendor . '.' . self::$module,
+            $phpMailerFolder => $modulesFolder . '/' . self::$vendor . '.' . self::$module . '/phpmailer',
         ];
-    }
-
-    /**
-     * Возвращает массив вида "путь до папки бибилиотеки" => "путь для установки".
-     * Для копироания данных в битрикс. Эти данные будут скопированы только при обновлении.
-     *
-     * @return array
-     */
-    protected static function getUpdatingFoldersPathes(Event $event)
-    {
-        $libFolder = self::getLibraryFolder($event);
-        $bitrixFolder = self::getBitrixFolder($event);
-
-        return [];
     }
 
     /**
@@ -70,7 +62,6 @@ class Composer
     public static function injectModule(Event $event)
     {
         $installingFoldersPathes = self::getInstallingFoldersPathes($event);
-        $updatingFoldersPathes = self::getUpdatingFoldersPathes($event);
         $fileSystem = new Filesystem();
 
         foreach ($installingFoldersPathes as $from => $to) {
@@ -80,14 +71,6 @@ class Composer
             if (!$to || !$from || !is_dir($from)) {
                 continue;
             }
-            self::copy($from, $to, $fileSystem);
-        }
-
-        foreach ($updatingFoldersPathes as $from => $to) {
-            if (!is_dir($to) || !is_dir($from)) {
-                continue;
-            }
-            $fileSystem->removeDirectory($to);
             self::copy($from, $to, $fileSystem);
         }
     }
@@ -138,10 +121,12 @@ class Composer
      * Возвращает путь до папки, в которую установлена бибилиотека.
      *
      * @param \Composer\Script\Event $event
+     * @param string                 $vendor
+     * @param string                 $module
      *
      * @return string
      */
-    protected static function getLibraryFolder(Event $event)
+    protected static function getLibraryFolder(Event $event, $vendor, $module)
     {
         $srcFolder = false;
         $composer = $event->getComposer();
@@ -150,8 +135,8 @@ class Composer
         $localRepository = $repositoryManager->getLocalRepository();
         $packages = $localRepository->getPackages();
         foreach ($packages as $package) {
-            if ($package->getName() === self::$vendor . '/' . self::$module) {
-                $srcFolder = realpath(rtrim($installationManager->getInstallPath($package), '/') . '/' . self::$vendor . '.' . self::$module);
+            if ($package->getName() === $vendor . '/' . $module) {
+                $srcFolder = realpath(rtrim($installationManager->getInstallPath($package), '/'));
                 break;
             }
         }

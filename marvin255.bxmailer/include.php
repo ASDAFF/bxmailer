@@ -4,8 +4,13 @@ use Bitrix\Main\Event;
 use Bitrix\Main\Config\Option;
 use marvin255\bxmailer\Exception;
 use marvin255\bxmailer\Mailer;
-use marvin255\bxmailer\handler\PhpMailer;
+use marvin255\bxmailer\handler\PhpMailer as PhpMailerHandler;
 use marvin255\bxmailer\message\Bxmail;
+use marvin255\bxmailer\AutoloaderPhpMailer;
+use PHPMailer\PHPMailer\PHPMailer;
+
+//используемсвой автолоадер, который соответствует psr
+require_once __DIR__ . '/lib/Autoloader.php';
 
 //получаем от битрикса исходные данные
 $moduleId = 'marvin255.bxmailer';
@@ -26,7 +31,10 @@ foreach ($event->getResults() as $eventResult) {
 
 //если обработчик не задан, то устанавливаем по умолчанию обертку над phpMailer
 if (!$mailer->getHandler()) {
-    $mailer->setHandler(new PhpMailer);
+    if (!class_exists('\PHPMailer\PHPMailer\PHPMailer')) {
+        AutoloaderPhpMailer::register(__DIR__ . '/phpmailer');
+    }
+    $mailer->setHandler(new PhpMailerHandler(new PHPMailer));
 }
 
 //определяем в модуле кастомную функцию для отправки писем
