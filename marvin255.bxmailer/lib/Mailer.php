@@ -7,8 +7,7 @@ use CEventLog;
 /**
  * Класс для отправки сообщений.
  *
- * Служит контейнером для обработчика отправки почты.
- * Передает настройки из битрикса в обработчик. Логирует исключения.
+ * Служит контейнером для обработчика отправки почты. Логирует исключения.
  *
  * Так, как нет никакой возможности передать через какой-либо
  * встроенный механизм, то реализует Singleton, что, в принципе,
@@ -84,7 +83,6 @@ class Mailer
      */
     public function setHandler(HandlerInterface $handler)
     {
-        $handler = $this->setOptionsToHandler($handler, $this->getOptions());
         $this->handler = $handler;
 
         return $this;
@@ -98,62 +96,6 @@ class Mailer
     public function getHandler()
     {
         return $this->handler;
-    }
-
-    /**
-     * Массив настроек, которые нужно будет применить к обработчику.
-     *
-     * @var array
-     */
-    protected $options = [];
-
-    /**
-     * Задает мссив настроек.
-     *
-     * @param array $options Массив вида "название опции => значение опции"
-     *
-     * @return \marvin255\bxmailer\Mailer
-     */
-    public function setOptions(array $options)
-    {
-        $this->options = $options;
-
-        return $this;
-    }
-
-    /**
-     * Возвращает массив настроек.
-     *
-     * @return array
-     */
-    public function getOptions()
-    {
-        return $this->options;
-    }
-
-    /**
-     * Настраивает объект обработчика с помощью опций из второго массива.
-     *
-     * При установке ищет либо public свойство обработчика с соответствующим именем.
-     * Либо метод сеттер, который формируется как 'set' . ucfirst('Имя свойства').
-     *
-     * @param \marvin255\bxmailer\HandlerInterface $handler
-     * @param array                                $options
-     *
-     * @return \marvin255\bxmailer\HandlerInterface
-     */
-    protected function setOptionsToHandler(HandlerInterface $handler, array $options)
-    {
-        foreach ($options as $name => $value) {
-            $setterName = 'set' . ucfirst($name);
-            if (property_exists($handler, $name)) {
-                $handler->$name = $value;
-            } elseif (method_exists($handler, $setterName)) {
-                $handler->$setterName($value);
-            }
-        }
-
-        return $handler;
     }
 
     /**

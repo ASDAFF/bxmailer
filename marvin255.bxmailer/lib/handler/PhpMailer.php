@@ -5,6 +5,7 @@ namespace marvin255\bxmailer\handler;
 use PHPMailer\PHPMailer\PHPMailer as PhpMailerLib;
 use marvin255\bxmailer\HandlerInterface;
 use marvin255\bxmailer\MessageInterface;
+use marvin255\bxmailer\OptionsInterface;
 use marvin255\bxmailer\Exception;
 
 /**
@@ -13,87 +14,28 @@ use marvin255\bxmailer\Exception;
 class PhpMailer implements HandlerInterface
 {
     /**
-     * Флаг, который указывает, что нужно использовать smtp.
-     *
-     * @var bool
-     */
-    public $is_smtp = false;
-    /**
-     * Логин для smtp.
-     *
-     * @var string
-     */
-    public $smtp_login = '';
-    /**
-     * Пароль для smtp.
-     *
-     * @var string
-     */
-    public $smtp_password = '';
-    /**
-     * Хост для smtp.
-     *
-     * @var string
-     */
-    public $smtp_host = '';
-    /**
-     * Порт для smtp.
-     *
-     * @var string
-     */
-    public $smtp_port = '';
-    /**
-     * Флаг, который указывает, что нужно использовать авторизацию для smtp.
-     *
-     * @var bool
-     */
-    public $smtp_auth = false;
-    /**
-     * Тип шифрования.
-     *
-     * @var string
-     */
-    public $smtp_secure = '';
-    /**
-     * Кодировка письма.
-     *
-     * @var string
-     */
-    public $charset = 'UTF-8';
-    /**
-     * Время в секундах, которое скрипт ожидает ответа от smtp.
-     *
-     * @var int
-     */
-    public $smtp_timeout = 15;
-    /**
-     * Уровень дебага для smtp.
-     *
-     * @var int
-     */
-    public $smtp_debug = 0;
-
-    /**
      * Объект phpMailer для отправки сообщений.
      *
      * @var \PHPMailer\PHPMailer\PHPMailer
      */
     protected $mailer = null;
     /**
-     * Флаг, который указывает, что общие настройки установлены настройки.
+     * Объект для передачи настроек из модуля в phpMailer.
      *
-     * @var bool
+     * @var \marvin255\bxmailer\OptionsInterface
      */
-    protected $optionsSetted = false;
+    protected $options = null;
 
     /**
      * Конструктор.
      *
      * @param \PHPMailer\PHPMailer\PHPMailer $mailer
+     * @param \marvin255\bxmailer\OptionsInterface $options
      */
-    public function __construct(PhpMailerLib $mailer)
+    public function __construct(PhpMailerLib $mailer, OptionsInterface $options)
     {
-        $this->mailer = $mailer;
+        $this->mailer = $this->setHandlerSettings($mailer, $options);
+        $this->options = $options;
     }
 
     /**
@@ -101,11 +43,8 @@ class PhpMailer implements HandlerInterface
      */
     public function send(MessageInterface $message)
     {
-        if (!$this->optionsSetted) {
-            $this->setHandlerSettings($this->mailer);
-        }
-
         $return = false;
+
         if (function_exists('mb_internal_encoding') && ((int) ini_get('mbstring.func_overload')) & 2) {
             $mbEncoding = mb_internal_encoding();
             mb_internal_encoding('ASCII');
@@ -195,26 +134,27 @@ class PhpMailer implements HandlerInterface
      * Устанавливает общие настройки для отправки каждого письма.
      *
      * @param \PHPMailer\PHPMailer\PHPMailer $mailer
+     * @param \marvin255\bxmailer\OptionsInterface $options
      *
      * @return \PHPMailer\PHPMailer\PHPMailer
      */
-    protected function setHandlerSettings(PhpMailerLib $mailer)
+    protected function setHandlerSettings(PhpMailerLib $mailer, OptionsInterface $options)
     {
-        $mailer->CharSet = $this->charset;
-        if ((bool) $this->is_smtp) {
+        $mailer->CharSet = $options->get('charset', 'UTF-8');
+        if ($options->getBool('is_smtp', false)) {
             $mailer->isSMTP();
-            $mailer->Timeout = (int) $this->smtp_timeout;
-            $mailer->Host = (string) $this->smtp_host;
-            $mailer->Username = (string) $this->smtp_login;
-            $mailer->Password = (string) $this->smtp_password;
-            $mailer->Port = (int) $this->smtp_port;
-            $mailer->SMTPSecure = (string) $this->smtp_secure;
-            $mailer->SMTPAuth = (bool) $this->smtp_auth;
-            if (!((bool) $this->smtp_auth)) {
+            $mailer->Timeout = $options->getInt('smtp_timeout', 15);
+            $mailer->Host = $options->get('smtp_host', '');
+            $mailer->Username = $options->get('smtp_login', '');
+            $mailer->Password = $options->get('smtp_password', '');
+            $mailer->Port = $options->get('smtp_port', null);
+            $mailer->SMTPSecure = $options->get('smtp_secure', null);
+            $mailer->SMTPAuth = $options->getBool('smtp_auth', false);
+            if (!$options->getBool('smtp_auth', false)) {
                 $mailer->SMTPAutoTLS = false;
             }
-            if ((int) $this->smtp_debug > 0) {
-                $mailer->SMTPDebug = (int) $this->smtp_debug;
+            if ($options->getInt('smtp_debug', 0) > 0) {
+                $mailer->SMTPDebug = $options->getInt('smtp_debug', 0);
             }
         }
 
