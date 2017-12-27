@@ -10,8 +10,8 @@ use PHPMailer\PHPMailer\PHPMailer;
 
 //используем свой автолоадер, который соответствует psr
 require_once __DIR__ . '/lib/Autoloader.php';
-Autoloader::register('marvin255\bxmailer', __DIR__ . '/lib');
-Autoloader::register('PHPMailer\PHPMailer', __DIR__ . '/phpmailer');
+Autoloader::register('\\marvin255\\bxmailer', __DIR__ . '/lib');
+Autoloader::register('\\PHPMailer\\PHPMailer', __DIR__ . '/phpmailer');
 
 //если кастомная отправка уже определена, то ничего не делаем
 if (!function_exists('custom_mail')) {
@@ -22,23 +22,27 @@ if (!function_exists('custom_mail')) {
     $event = new Event('marvin255.bxmailer', 'createHandler', ['mailer' => $mailer]);
     $event->send();
 
-    //если обработчик не задан, то устанавливаем по умолчанию обертку над phpMailer
-    if (!$mailer->getHandler()) {
-        $mailer->setHandler(new PHPMailerHandler(
-            new PHPMailer(true),
-            new BitrixOptions('marvin255.bxmailer')
-        ));
-    }
-
     //определяем в модуле кастомную функцию для отправки писем
     function custom_mail($to, $subject, $message, $additional_headers, $additional_parameters)
     {
-        return Mailer::getInstance()->send(new Bxmail(
+        $mailer = Mailer::getInstance();
+
+        //если обработчик не задан, то устанавливаем по умолчанию обертку над phpMailer
+        if (!$mailer->getHandler()) {
+            $mailer->setHandler(new PHPMailerHandler(
+                new PHPMailer(true),
+                new BitrixOptions('marvin255.bxmailer')
+            ));
+        }
+
+        $message = new Bxmail(
             $to,
             $subject,
             $message,
             $additional_headers,
             $additional_parameters
-        ));
+        );
+
+        return $mailer->send($message);
     }
 }

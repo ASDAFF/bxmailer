@@ -8,25 +8,44 @@ namespace marvin255\bxmailer;
 class Autoloader
 {
     /**
-     * @param string
+     * Соответствие между пространством имен и папкой в файловой системе.
+     *
+     * @var array
      */
-    protected static $prefix = null;
+    protected static $psr = null;
     /**
-     * @param string
+     * Флаг о том, что автозагрузчик зарегистрирован.
+     *
+     * @var bool
      */
-    protected static $path = null;
+    protected static $splRegister = null;
 
     /**
      * @param string $path
      *
      * @return bool
+     *
+     * @throws \marvin255\bxmailer\Exception
      */
     public static function register($prefix = __NAMESPACE__, $path = __DIR__)
     {
-        self::$prefix = $prefix;
-        self::$path = $path;
+        $prefix = trim($prefix, ' \\');
+        if ($prefix === '') {
+            throw new Exception('Empty prefix for autoloader');
+        }
 
-        return spl_autoload_register([__CLASS__, 'load'], true, true);
+        $path = rtrim(trim($path), '/');
+        if ($path === '') {
+            throw new Exception('Empty path for autoloader');
+        }
+
+        self::$psr[$prefix] = $path;
+
+        if (!self::$splRegister) {
+            self::$splRegister = spl_autoload_register([__CLASS__, 'load'], true, true);
+        }
+
+        return self::$splRegister;
     }
 
     /**
@@ -34,14 +53,17 @@ class Autoloader
      */
     public static function load($class)
     {
-        $len = strlen(self::$prefix);
-        if (strncmp(self::$prefix, $class, $len) !== 0) {
-            return;
-        }
-        $relative_class = substr($class, $len);
-        $file = self::$path . '/' . str_replace('\\', '/', $relative_class) . '.php';
-        if (file_exists($file)) {
-            require $file;
+        foreach (self::$psr as $prefix => $path) {
+            $len = strlen($prefix);
+            if (strncmp($prefix, $class, $len) !== 0) {
+                continue;
+            }
+            $relative_class = substr($class, $len);
+            $file = $path . '/' . str_replace('\\', '/', $relative_class) . '.php';
+            if (file_exists($file)) {
+                require $file;
+                break;
+            }
         }
     }
 }
