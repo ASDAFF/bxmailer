@@ -29,7 +29,7 @@ class PhpMailer implements HandlerInterface
     /**
      * Конструктор.
      *
-     * @param \PHPMailer\PHPMailer\PHPMailer $mailer
+     * @param \PHPMailer\PHPMailer\PHPMailer       $mailer
      * @param \marvin255\bxmailer\OptionsInterface $options
      */
     public function __construct(PhpMailerLib $mailer, OptionsInterface $options)
@@ -133,7 +133,7 @@ class PhpMailer implements HandlerInterface
     /**
      * Устанавливает общие настройки для отправки каждого письма.
      *
-     * @param \PHPMailer\PHPMailer\PHPMailer $mailer
+     * @param \PHPMailer\PHPMailer\PHPMailer       $mailer
      * @param \marvin255\bxmailer\OptionsInterface $options
      *
      * @return \PHPMailer\PHPMailer\PHPMailer
