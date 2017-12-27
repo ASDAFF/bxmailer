@@ -39,7 +39,6 @@ if ((!empty($save) || !empty($restore)) && $request->isPost() && check_bitrix_se
             'smtp_secure',
             'smtp_port',
             'charset',
-            'smtp_debug',
             'smtp_auth',
         ];
         foreach ($fields as $field) {
@@ -97,17 +96,6 @@ $tabControl->begin();
                        <?php if (Option::get($module_id, 'is_smtp')) {
         echo 'checked';
     } ?>
-                       />
-            </td>
-        </tr>
-        <tr>
-            <td width="40%">
-                <label><?php echo Loc::getMessage('MARVIN255_BXMAILER_PREFERENCIES_SMTP_DEBUG') ?>:</label>
-            <td width="60%">
-                <input type="text"
-                       size="50"
-                       name="smtp_debug"
-                       value="<?php echo htmlentities(Option::get($module_id, 'smtp_debug')); ?>"
                        />
             </td>
         </tr>

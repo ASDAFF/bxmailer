@@ -7,7 +7,6 @@ $MESS['MARVIN255_BXMAILER_PREFERENCIES_SMTP_SECURE'] = 'Тип шифрован�
 $MESS['MARVIN255_BXMAILER_PREFERENCIES_SMTP_PORT'] = 'Порт для smtp';
 $MESS['MARVIN255_BXMAILER_PREFERENCIES_CHARSET'] = 'Кодировка';
 $MESS['MARVIN255_BXMAILER_PREFERENCIES_USE_SMTP'] = 'Использовать smtp';
-$MESS['MARVIN255_BXMAILER_PREFERENCIES_SMTP_DEBUG'] = 'Включить дебаг в smtp';
 $MESS['MARVIN255_BXMAILER_PREFERENCIES_SMTP_AUTH'] = 'Использовать авторизацию для smtp';
 
 $MESS['MARVIN255_BXMAILER_PRESENTED_BY_PHPMAILER'] = 'В основе модуля лежит библиотека <a href="https://github.com/PHPMailer/PHPMailer">phpMailer</a>.'
