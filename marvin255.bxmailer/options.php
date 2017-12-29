@@ -14,6 +14,7 @@ if (!$USER->isAdmin()) {
 $app = Application::getInstance();
 $context = $app->getContext();
 $request = $context->getRequest();
+CJSCore::Init(['jquery']);
 
 Loc::loadMessages($context->getServer()->getDocumentRoot() . '/bitrix/modules/main/options.php');
 Loc::loadMessages(__FILE__);
@@ -69,6 +70,53 @@ if ((!empty($save) || !empty($restore)) && $request->isPost() && check_bitrix_se
         ]);
     }
 ?>
+
+<script>
+    (function ($, $document) {
+
+        $document.on('click', '.js-test-sender', function () {
+            var $this = $(this);
+            var endpointUrl = $this.attr('data-endpoint');
+            var $result = $this.closest('table').find('.js-test-sender-result');
+            var $sendData = $this.closest('form').serialize();
+
+            if (!$this.prop('disabled')) {
+                $this.closest('table').find('input').prop('disabled', true);
+                $.ajax({
+                    url: endpointUrl,
+                    type: 'POST',
+                    cache: false,
+                    dataType: 'json',
+                    data: $sendData
+                }).done(function (response) {
+                    $result.empty().attr(
+                        'style',
+                        'color: ' + (response.status ? 'green' : 'red')
+                    );
+                    var $message = $('<p />');
+                    if (response.status) {
+                        $message.html('<b>Сообщение отправлено</b>');
+                    } else {
+                        $message.text(response.error);
+                    }
+                    $message.appendTo($result);
+                    if (response.printed_data) {
+                        $('<p />').text(response.printed_data).appendTo($result);
+                    }
+                }).fail(function() {
+                    $result.attr('style', 'color: red')
+                        .empty()
+                        .text('Во время ajax запроса произошла ошибка.');
+                }).always(function() {
+                    $this.closest('table').find('input').prop('disabled', false);
+                });
+            }
+
+            return false;
+        });
+
+    })(jQuery, jQuery(document));
+</script>
 
 <?php
 $tabControl->begin();
@@ -176,7 +224,73 @@ $tabControl->begin();
     <?php
         $tabControl->beginNextTab();
     ?>
-        test form
+        <tr>
+            <td width="40%">
+                <label>
+                    Email или список email'ов через запятую, на который отправить письмо
+                </label>
+            </td>
+            <td width="60%">
+                <input type="text" size="50" name="to" value="">
+            </td>
+        </tr>
+        <tr>
+            <td width="40%">
+                <label>
+                    Email отправителя
+                </label>
+            </td>
+            <td width="60%">
+                <input type="text" size="50" name="from" value="">
+            </td>
+        </tr>
+        <tr>
+            <td width="40%">
+                <label>
+                    Тема письма
+                </label>
+            </td>
+            <td width="60%">
+                <input type="text" size="50" name="subject" value="Тестовое сообщение из модуля marvin255.bxmailer">
+            </td>
+        </tr>
+        <tr>
+            <td width="40%">
+                <label>
+                    Html в сообщении
+                </label>
+            </td>
+            <td width="60%">
+                <input type="checkbox" name="isHtml" value="1">
+            </td>
+        </tr>
+        <tr>
+            <td width="40%">
+                <label>
+                    Сообщение
+                </label>
+            </td>
+            <td width="60%">
+                <input type="text" size="50" name="message" value="Тестовое сообщение из модуля marvin255.bxmailer">
+            </td>
+        </tr>
+        <tr>
+            <td width="40%">
+            </td>
+            <td width="60%">
+                <input type="submit" class="js-test-sender" data-endpoint="/bitrix/admin/marvin255_bxmailer_send_test.php" value="Отправить">
+            </td>
+        </tr>
+        <tr>
+            <td width="40%">
+                <label>
+                    Результат
+                </label>
+            </td>
+            <td width="60%">
+                <div class="js-test-sender-result">-</div>
+            </td>
+        </tr>
     <?php
         $tabControl->buttons();
     ?>

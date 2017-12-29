@@ -36,7 +36,7 @@ $res = [
 if (!empty($posted['to']) && !empty($posted['subject']) && check_bitrix_sessid()) {
     $mailer = Mailer::getInstance();
     $message = new ArrayBased([
-        'to' => [$posted['to']],
+        'to' => array_map('trim', explode(',', $posted['to'])),
         'subject' => isset($posted['subject']) ? $posted['subject'] : '',
         'message' => isset($posted['message']) ? $posted['message'] : '',
         'isHtml' => !empty($posted['isHtml']),
