@@ -227,7 +227,7 @@ $tabControl->begin();
         <tr>
             <td width="40%">
                 <label>
-                    Email или список email'ов через запятую, на который отправить письмо
+                    <?php echo Loc::getMessage('MARVIN255_BXMAILER_TEST_TO') ?>:
                 </label>
             </td>
             <td width="60%">
@@ -237,7 +237,7 @@ $tabControl->begin();
         <tr>
             <td width="40%">
                 <label>
-                    Email отправителя
+                    <?php echo Loc::getMessage('MARVIN255_BXMAILER_TEST_FROM') ?>:
                 </label>
             </td>
             <td width="60%">
@@ -247,17 +247,17 @@ $tabControl->begin();
         <tr>
             <td width="40%">
                 <label>
-                    Тема письма
+                    <?php echo Loc::getMessage('MARVIN255_BXMAILER_TEST_SUBJECT') ?>:
                 </label>
             </td>
             <td width="60%">
-                <input type="text" size="50" name="subject" value="Тестовое сообщение из модуля marvin255.bxmailer">
+                <input type="text" size="50" name="subject" value="<?php echo Loc::getMessage('MARVIN255_BXMAILER_TEST_SUBJECT_TEXT') ?>">
             </td>
         </tr>
         <tr>
             <td width="40%">
                 <label>
-                    Html в сообщении
+                    <?php echo Loc::getMessage('MARVIN255_BXMAILER_TEST_IS_HTML') ?>:
                 </label>
             </td>
             <td width="60%">
@@ -267,24 +267,24 @@ $tabControl->begin();
         <tr>
             <td width="40%">
                 <label>
-                    Сообщение
+                    <?php echo Loc::getMessage('MARVIN255_BXMAILER_TEST_MESSAGE') ?>:
                 </label>
             </td>
             <td width="60%">
-                <input type="text" size="50" name="message" value="Тестовое сообщение из модуля marvin255.bxmailer">
+                <input type="text" size="50" name="message" value="<?php echo Loc::getMessage('MARVIN255_BXMAILER_TEST_MESSAGE_TEXT') ?>">
             </td>
         </tr>
         <tr>
             <td width="40%">
             </td>
             <td width="60%">
-                <input type="submit" class="js-test-sender" data-endpoint="/bitrix/admin/marvin255_bxmailer_send_test.php" value="Отправить">
+                <input type="submit" class="js-test-sender" data-endpoint="/bitrix/admin/marvin255_bxmailer_send_test.php" value="<?php echo Loc::getMessage('MARVIN255_BXMAILER_TEST_SEND') ?>">
             </td>
         </tr>
         <tr>
             <td width="40%" style="vertical-align: top;">
                 <label>
-                    Результат
+                    <?php echo Loc::getMessage('MARVIN255_BXMAILER_TEST_RESULT') ?>
                 </label>
             </td>
             <td width="60%">

@@ -9,6 +9,15 @@ $MESS['MARVIN255_BXMAILER_PREFERENCIES_SMTP_PORT'] = 'Порт для smtp';
 $MESS['MARVIN255_BXMAILER_PREFERENCIES_CHARSET'] = 'Кодировка';
 $MESS['MARVIN255_BXMAILER_PREFERENCIES_USE_SMTP'] = 'Использовать smtp';
 $MESS['MARVIN255_BXMAILER_PREFERENCIES_SMTP_AUTH'] = 'Использовать авторизацию для smtp';
+$MESS['MARVIN255_BXMAILER_TEST_TO'] = 'Email или список email\'ов через запятую, на который отправить письмо';
+$MESS['MARVIN255_BXMAILER_TEST_FROM'] = 'От кого';
+$MESS['MARVIN255_BXMAILER_TEST_SUBJECT'] = 'Тема письма';
+$MESS['MARVIN255_BXMAILER_TEST_IS_HTML'] = 'Html в сообщении';
+$MESS['MARVIN255_BXMAILER_TEST_MESSAGE'] = 'Сообщение';
+$MESS['MARVIN255_BXMAILER_TEST_SEND'] = 'Отправить';
+$MESS['MARVIN255_BXMAILER_TEST_RESULT'] = 'Результат';
+$MESS['MARVIN255_BXMAILER_TEST_MESSAGE_TEXT'] = 'Тестовое сообщение из модуля marvin255.bxmailer';
+$MESS['MARVIN255_BXMAILER_TEST_SUBJECT_TEXT'] = 'Тестовое сообщение из модуля marvin255.bxmailer';
 
 $MESS['MARVIN255_BXMAILER_PRESENTED_BY_PHPMAILER'] = 'В основе модуля лежит библиотека <a href="https://github.com/PHPMailer/PHPMailer">phpMailer</a>.'
     . ' Автор модуля выражает огромную признательность сообществу phpMailer.';
@@ -40,6 +49,12 @@ $MESS['MARVIN255_BXMAILER_SMTP'] = '<table><tr>'
     . 'Тип шифрования для smtp: tls<br>'
     . 'Порт для smtp: 587<br>'
     . 'Использовать авторизацию для smtp: да'
+    . '</td>'
+    . '</tr><tr>'
+    . '<td colspan="3">'
+    . '<br><b>Внимание:</b> '
+    . 'Убедитесь, что с каждым сообщением отправляется заголовок From (От кого), '
+    . 'в котором указан логин, с помощью которого вы подключаетесь к smtp.'
     . '</td>'
     . '</tr></table>';
 
