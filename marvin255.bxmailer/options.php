@@ -93,9 +93,7 @@ $tabControl->begin();
                 <input type="checkbox"
                        name="is_smtp"
                        value="1"
-                       <?php if (Option::get($module_id, 'is_smtp')) {
-        echo 'checked';
-    } ?>
+                       <?php echo Option::get($module_id, 'is_smtp') ? 'checked' : ''; ?>
                        />
             </td>
         </tr>
@@ -107,9 +105,7 @@ $tabControl->begin();
                 <input type="checkbox"
                        name="smtp_auth"
                        value="1"
-                       <?php if (Option::get($module_id, 'smtp_auth')) {
-        echo 'checked';
-    } ?>
+                       <?php echo Option::get($module_id, 'smtp_auth') ? 'checked' : ''; ?>
                        />
             </td>
         </tr>
@@ -148,21 +144,6 @@ $tabControl->begin();
         </tr>
         <tr>
             <td width="40%">
-                <label><?php echo Loc::getMessage('MARVIN255_BXMAILER_PREFERENCIES_SMTP_SECURE') ?>:</label>
-            <td width="60%">
-                <select name="smtp_secure">
-                    <option value="">Нет</option>
-                    <option value="ssl"<?php if (Option::get($module_id, 'smtp_secure') === 'ssl') {
-        echo ' selected';
-    } ?>>ssl</option>
-                    <option value="tls"<?php if (Option::get($module_id, 'smtp_secure') === 'tls') {
-        echo ' selected';
-    } ?>>tls</option>
-                </select>
-            </td>
-        </tr>
-        <tr>
-            <td width="40%">
                 <label><?php echo Loc::getMessage('MARVIN255_BXMAILER_PREFERENCIES_SMTP_PORT') ?>:</label>
             <td width="60%">
                 <input type="text"
@@ -170,6 +151,21 @@ $tabControl->begin();
                        name="smtp_port"
                        value="<?php echo htmlentities(Option::get($module_id, 'smtp_port')); ?>"
                        />
+            </td>
+        </tr>
+        <tr>
+            <td width="40%">
+                <label><?php echo Loc::getMessage('MARVIN255_BXMAILER_PREFERENCIES_SMTP_SECURE') ?>:</label>
+            <td width="60%">
+                <select name="smtp_secure">
+                    <option value="">Нет</option>
+                    <option value="ssl"<?php echo Option::get($module_id, 'smtp_secure') === 'ssl' ? ' selected' : ''; ?>>
+                        ssl
+                    </option>
+                    <option value="tls"<?php echo Option::get($module_id, 'smtp_secure') === 'tls' ? ' selected' : ''; ?>>
+                        tls
+                    </option>
+                </select>
             </td>
         </tr>
     <?php
