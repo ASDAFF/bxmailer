@@ -19,6 +19,9 @@ $MESS['MARVIN255_BXMAILER_TEST_RESULT'] = 'Результат';
 $MESS['MARVIN255_BXMAILER_TEST_MESSAGE_TEXT'] = 'Тестовое сообщение из модуля marvin255.bxmailer';
 $MESS['MARVIN255_BXMAILER_TEST_SUBJECT_TEXT'] = 'Тестовое сообщение из модуля marvin255.bxmailer';
 
+$MESS['MARVIN255_BXMAILER_TEST_AJAX_ERROR'] = 'Во время ajax запроса произошла ошибка';
+$MESS['MARVIN255_BXMAILER_TEST_AJAX_SENDED'] = 'Сообщение отправлено';
+
 $MESS['MARVIN255_BXMAILER_PRESENTED_BY_PHPMAILER'] = 'В основе модуля лежит библиотека <a href="https://github.com/PHPMailer/PHPMailer">phpMailer</a>.'
     . ' Автор модуля выражает огромную признательность сообществу phpMailer.';
 

@@ -95,7 +95,7 @@ if ((!empty($save) || !empty($restore)) && $request->isPost() && check_bitrix_se
                     );
                     var $message = $('<div />');
                     if (response.status) {
-                        $message.html('<b>Сообщение отправлено</b>');
+                        $message.html('<b><?php echo Loc::getMessage('MARVIN255_BXMAILER_TEST_AJAX_SENDED') ?></b>');
                     } else {
                         $message.text(response.error);
                     }
@@ -106,7 +106,7 @@ if ((!empty($save) || !empty($restore)) && $request->isPost() && check_bitrix_se
                 }).fail(function() {
                     $result.attr('style', 'color: red')
                         .empty()
-                        .text('Во время ajax запроса произошла ошибка.');
+                        .text('<?php echo Loc::getMessage('MARVIN255_BXMAILER_TEST_AJAX_ERROR') ?>');
                 }).always(function() {
                     $this.closest('table').find('input').prop('disabled', false);
                 });

@@ -29,7 +29,7 @@ $posted = Application::getInstance()
 
 $res = [
     'status' => false,
-    'error' => 'Не указаны входящие данные',
+    'error' => Loc::getMessage('MARVIN255_BXMAILER_PREFERENCIES_SEND_TEST_NO_DATA'),
     'printed_data' => '',
 ];
 
