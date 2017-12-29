@@ -93,7 +93,7 @@ if ((!empty($save) || !empty($restore)) && $request->isPost() && check_bitrix_se
                         'style',
                         'color: ' + (response.status ? 'green' : 'red')
                     );
-                    var $message = $('<p />');
+                    var $message = $('<div />');
                     if (response.status) {
                         $message.html('<b>Сообщение отправлено</b>');
                     } else {
@@ -282,7 +282,7 @@ $tabControl->begin();
             </td>
         </tr>
         <tr>
-            <td width="40%">
+            <td width="40%" style="vertical-align: top;">
                 <label>
                     Результат
                 </label>
