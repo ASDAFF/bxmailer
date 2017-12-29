@@ -142,14 +142,7 @@ class Bxmail implements MessageInterface
     public function getSubject()
     {
         if (!isset($this->handled['subject'])) {
-            $this->handled['subject'] = $this->subject;
-            if (mb_strpos($this->subject, '=?UTF-') === 0) {
-                $this->handled['subject'] = base64_decode(preg_replace(
-                    '/^=\?UTF-8\?B\?([^\?]+)\?=$/i',
-                    '$1',
-                    $this->subject
-                ));
-            }
+            $this->handled['subject'] = $this->decodeMimeHeader($this->subject);
         }
 
         return $this->handled['subject'];
@@ -218,7 +211,7 @@ class Bxmail implements MessageInterface
                 if (preg_match('/^([^\:]+)\:(.*)$/', $strHeader, $matches)) {
                     $key = trim($matches[1]);
                     $value = trim($matches[2]);
-                    $this->handled['allHeaders'][$key] = $value;
+                    $this->handled['allHeaders'][$key] = $this->decodeMimeHeader($value);
                 }
             }
         }
@@ -243,6 +236,28 @@ class Bxmail implements MessageInterface
             }
             $return = $headerValue;
             break;
+        }
+
+        return $return;
+    }
+
+    /**
+     * Декодирует mime заголовок.
+     *
+     * @param string $header
+     *
+     * @return string
+     */
+    protected function decodeMimeHeader($header)
+    {
+        $return = $header;
+
+        if (mb_strpos(trim($header), '=?UTF-') === 0) {
+            $return = base64_decode(preg_replace(
+                '/^=\?UTF-8\?B\?([^\?]+)\?=$/i',
+                '$1',
+                trim($header)
+            ));
         }
 
         return $return;

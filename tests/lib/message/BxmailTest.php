@@ -90,7 +90,7 @@ class BxmailTest extends BaseTestCase
 
     public function testGetSubject()
     {
-        $subject = 'subject_' . mt_rand();
+        $subject = 'subject_тема_' . mt_rand();
         $message = new Bxmail(
             'test@test.test',
             $subject,
@@ -105,7 +105,7 @@ class BxmailTest extends BaseTestCase
 
     public function testGetEncodedSubject()
     {
-        $subject = 'subject_' . mt_rand();
+        $subject = 'subject_тема_' . mt_rand();
         $message = new Bxmail(
             'test@test.test',
             '=?UTF-8?B?' . base64_encode($subject) . '?=',
