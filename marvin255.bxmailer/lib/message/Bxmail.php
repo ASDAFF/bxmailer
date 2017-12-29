@@ -252,12 +252,8 @@ class Bxmail implements MessageInterface
     {
         $return = $header;
 
-        if (mb_strpos(trim($header), '=?UTF-') === 0) {
-            $return = base64_decode(preg_replace(
-                '/^=\?UTF-8\?B\?([^\?]+)\?=$/i',
-                '$1',
-                trim($header)
-            ));
+        if (mb_strpos(trim($header), '=?UTF-') !== false) {
+            $return = mb_decode_mimeheader(trim($header));
         }
 
         return $return;

@@ -108,7 +108,7 @@ class BxmailTest extends BaseTestCase
         $subject = 'subject_тема_' . mt_rand();
         $message = new Bxmail(
             'test@test.test',
-            '=?UTF-8?B?' . base64_encode($subject) . '?=',
+            mb_encode_mimeheader($subject),
             'test'
         );
 
