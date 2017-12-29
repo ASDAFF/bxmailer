@@ -60,6 +60,7 @@ class Mailer
         try {
             $res = $handler->send($message);
         } catch (\Exception $e) {
+            $this->lastError = $e->getMessage();
             $this->logException($e, 'send_error', get_class($handler) . '::send');
             $res = false;
         }
@@ -96,6 +97,23 @@ class Mailer
     public function getHandler()
     {
         return $this->handler;
+    }
+
+    /**
+     * Последняя ошибка, которую прислал обюработчик отправки.
+     *
+     * @var string
+     */
+    protected $lastError = null;
+
+    /**
+     * Возвращает последнюю ошибку, которую прислал обюработчик отправки.
+     *
+     * @return string|null
+     */
+    public function getLastError()
+    {
+        return $this->lastError;
     }
 
     /**

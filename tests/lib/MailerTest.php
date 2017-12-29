@@ -64,6 +64,10 @@ class MailerTest extends BaseTestCase
             false,
             $mailer->send($message)
         );
+        $this->assertSame(
+            $exception,
+            $mailer->getLastError()
+        );
         $this->assertContains(
             $exception,
             \CEventLog::$add['DESCRIPTION']

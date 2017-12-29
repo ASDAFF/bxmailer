@@ -3,6 +3,7 @@
 use Bitrix\Main\Localization\Loc;
 use Bitrix\Main\ModuleManager;
 use Bitrix\Main\Config\Option;
+use Bitrix\Main\Application;
 
 Loc::loadMessages(__FILE__);
 
@@ -71,6 +72,10 @@ class marvin255_bxmailer extends CModule
      */
     public function installFiles()
     {
+        CopyDirFiles(
+            $this->getInstallatorPath() . '/admin',
+            Application::getDocumentRoot() . '/bitrix/admin'
+        );
     }
 
     /**
@@ -78,6 +83,10 @@ class marvin255_bxmailer extends CModule
      */
     public function unInstallFiles()
     {
+        CopyDirFiles(
+            $this->getInstallatorPath() . '/admin',
+            Application::getDocumentRoot() . '/bitrix/admin'
+        );
     }
 
     /**

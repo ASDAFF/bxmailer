@@ -25,6 +25,12 @@ class PhpMailer implements HandlerInterface
      * @var \marvin255\bxmailer\OptionsInterface
      */
     protected $options = null;
+    /**
+     * Флаг, который указывает, что объект мэйлера настроен.
+     *
+     * @var bool
+     */
+    protected $isSetHandlerSettings = false;
 
     /**
      * Конструктор.
@@ -34,7 +40,7 @@ class PhpMailer implements HandlerInterface
      */
     public function __construct(PhpMailerLib $mailer, OptionsInterface $options)
     {
-        $this->mailer = $this->setHandlerSettings($mailer, $options);
+        $this->mailer = $mailer;
         $this->options = $options;
     }
 
@@ -43,6 +49,11 @@ class PhpMailer implements HandlerInterface
      */
     public function send(MessageInterface $message)
     {
+        if (!$this->isSetHandlerSettings) {
+            $this->isSetHandlerSettings = true;
+            $this->setHandlerSettings($this->mailer, $this->options);
+        }
+
         $return = false;
 
         if (function_exists('mb_internal_encoding') && ((int) ini_get('mbstring.func_overload')) & 2) {

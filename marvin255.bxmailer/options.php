@@ -24,6 +24,11 @@ $tabControl = new CAdminTabControl('tabControl', [
         'TAB' => Loc::getMessage('MAIN_TAB_SET'),
         'TITLE' => Loc::getMessage('MAIN_TAB_TITLE_SET'),
     ],
+    [
+        'DIV' => 'edit2',
+        'TAB' => Loc::getMessage('MARVIN255_BXMAILER_TAB_TEST'),
+        'TITLE' => Loc::getMessage('MARVIN255_BXMAILER_TAB_TEST'),
+    ],
 ]);
 
 $isConfigComplete = false;
@@ -168,6 +173,10 @@ $tabControl->begin();
                 </select>
             </td>
         </tr>
+    <?php
+        $tabControl->beginNextTab();
+    ?>
+        test form
     <?php
         $tabControl->buttons();
     ?>

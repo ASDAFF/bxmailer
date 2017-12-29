@@ -13,28 +13,41 @@ require_once __DIR__ . '/lib/Autoloader.php';
 Autoloader::register('\\marvin255\\bxmailer', __DIR__ . '/lib');
 Autoloader::register('\\PHPMailer\\PHPMailer', __DIR__ . '/phpmailer');
 
-//если кастомная отправка уже определена, то ничего не делаем
-if (!function_exists('custom_mail')) {
-    define('MARVIN255_BXMAILER_IS_CUSTOM_MAIL_SET', true);
-
-    //запускаем событие, чтобы дать возможность другому модулю прописать свой обработчик
+//запускаем событие, чтобы дать возможность другому модулю прописать свой обработчик
+try {
     $mailer = Mailer::getInstance();
     $event = new Event('marvin255.bxmailer', 'createHandler', ['mailer' => $mailer]);
     $event->send();
+    //если обработчик не задан, то устанавливаем по умолчанию обертку над phpMailer
+    if (!$mailer->getHandler()) {
+        $mailer->setHandler(new PHPMailerHandler(
+            new PHPMailer(true),
+            new BitrixOptions('marvin255.bxmailer')
+        ));
+    }
+} catch (Exception $e) {
+    CEventLog::add([
+        'SEVERITY' => 'ERROR',
+        'AUDIT_TYPE_ID' => 'bxmailer_initialize_error',
+        'MODULE_ID' => 'marvin255.bxmailer',
+        'ITEM_ID' => '',
+        'DESCRIPTION' => json_encode([
+            'class' => get_class($e),
+            'message' => $e->getMessage(),
+            'code' => $e->getCode(),
+            'file' => $e->getFile(),
+            'line' => $e->getLine(),
+        ], JSON_UNESCAPED_UNICODE),
+    ]);
+    define('MARVIN255_BXMAILER_NO_INJECT', true);
+}
 
-    //определяем в модуле кастомную функцию для отправки писем
+//если кастомная отправка уже определена, то ничего не делаем
+if (!function_exists('custom_mail') && !defined('MARVIN255_BXMAILER_NO_INJECT')) {
+    define('MARVIN255_BXMAILER_IS_CUSTOM_MAIL_SET', true);
+    //определяем кастомную функцию для отправки писем
     function custom_mail($to, $subject, $message, $additional_headers, $additional_parameters)
     {
-        $mailer = Mailer::getInstance();
-
-        //если обработчик не задан, то устанавливаем по умолчанию обертку над phpMailer
-        if (!$mailer->getHandler()) {
-            $mailer->setHandler(new PHPMailerHandler(
-                new PHPMailer(true),
-                new BitrixOptions('marvin255.bxmailer')
-            ));
-        }
-
         $message = new Bxmail(
             $to,
             $subject,
