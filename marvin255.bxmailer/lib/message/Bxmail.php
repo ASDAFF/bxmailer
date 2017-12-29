@@ -250,12 +250,6 @@ class Bxmail implements MessageInterface
      */
     protected function decodeMimeHeader($header)
     {
-        $return = $header;
-
-        if (mb_strpos(trim($header), '=?UTF-') !== false) {
-            $return = mb_decode_mimeheader(trim($header));
-        }
-
-        return $return;
+        return mb_decode_mimeheader(trim($header));
     }
 }
