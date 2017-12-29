@@ -134,7 +134,7 @@ $tabControl->begin();
                 <input type="text"
                        size="50"
                        name="charset"
-                       value="<?php echo htmlentities(Option::get($module_id, 'charset')); ?>"
+                       value="<?php echo htmlentities(Option::get($module_id, 'charset', 'UTF-8')); ?>"
                        />
             </td>
         </tr>
