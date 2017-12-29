@@ -11,6 +11,7 @@
 * [Установка](#Установка).
 * [Настройка](#Настройка).
 * [Замена транспорта](#Замена-транспорта).
+* [Благодарности](#Благодарности).
 
 
 
@@ -77,3 +78,9 @@ function createHandlerHandler($mailer)
 ```
 
 Для того, чтобы все заработало, класс `MyAwesomeHandler` должен реализовывать интерфейс [`\marvin255\bxmailer\HandlerInterface`](https://github.com/marvin255/bxmailer/blob/master/marvin255.bxmailer/lib/HandlerInterface.php).
+
+
+
+## Благодарности
+
+В основе модуля лежит библиотека [phpMailer](https://github.com/PHPMailer/PHPMailer). Автор модуля выражает огромную признательность сообществу phpMailer.
