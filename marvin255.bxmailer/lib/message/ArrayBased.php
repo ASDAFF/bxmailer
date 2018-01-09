@@ -122,4 +122,16 @@ class ArrayBased implements MessageInterface
 
         return is_array($res) ? $res : [];
     }
+
+    /**
+     * @inheritdoc
+     */
+    public function getAttachments()
+    {
+        $res = isset($this->messageData['attachments'])
+            ? $this->messageData['attachments']
+            : null;
+
+        return is_array($res) ? $res : [];
+    }
 }

@@ -42,20 +42,42 @@ try {
     define('MARVIN255_BXMAILER_NO_INJECT', true);
 }
 
-//если кастомная отправка уже определена, то ничего не делаем
-if (!function_exists('custom_mail') && !defined('MARVIN255_BXMAILER_NO_INJECT')) {
-    define('MARVIN255_BXMAILER_IS_CUSTOM_MAIL_SET', true);
+if (function_exists('custom_mail')) {
+    //если кастомная отправка уже определена, то помечаем это в логе
+    CEventLog::add([
+        'SEVERITY' => 'ERROR',
+        'AUDIT_TYPE_ID' => 'bxmailer_initialize_error',
+        'MODULE_ID' => 'marvin255.bxmailer',
+        'ITEM_ID' => '',
+        'DESCRIPTION' => 'custom_mail function already defined',
+    ]);
+} elseif (!defined('MARVIN255_BXMAILER_NO_INJECT')) {
     //определяем кастомную функцию для отправки писем
+    define('MARVIN255_BXMAILER_IS_CUSTOM_MAIL_SET', true);
     function custom_mail($to, $subject, $message, $additional_headers, $additional_parameters)
     {
-        $message = new Bxmail(
+        $messageContainer = new Bxmail(
             $to,
             $subject,
             $message,
             $additional_headers,
             $additional_parameters
         );
+        //выбрасываем событие для того, чтобы можно было заменить тип сообщения
+        $messageEvent = new Event(
+            'marvin255.bxmailer',
+            'createMessage',
+            [
+                'messageContainer' => $messageContainer,
+                'to' => $to,
+                'subject' => $subject,
+                'message' => $message,
+                'additional_headers' => $additional_headers,
+                'additional_parameters' => $additional_parameters,
+            ]
+        );
+        $messageEvent->send();
 
-        return $mailer->send($message);
+        return $mailer->send($messageContainer);
     }
 }

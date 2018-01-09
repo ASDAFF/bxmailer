@@ -21,6 +21,10 @@ class PhpMailerTest extends BaseTestCase
             'header_1_' . mt_rand() => 'value_1_' . mt_rand(),
             'header_2_' . mt_rand() => 'value_2_' . mt_rand(),
         ];
+        $attachments = [
+            'name_1' => 'path_1_' . mt_rand(),
+            'name_2' => 'path_2_' . mt_rand(),
+        ];
 
         $message = $this->getMockBuilder('\marvin255\bxmailer\MessageInterface')->getMock();
         $message->method('getSubject')->will($this->returnValue($subject));
@@ -32,6 +36,7 @@ class PhpMailerTest extends BaseTestCase
         $message->method('getCc')->will($this->returnValue($cc));
         $message->method('getBcc')->will($this->returnValue($bcc));
         $message->method('getAdditionalHeaders')->will($this->returnValue($headers));
+        $message->method('getAttachments')->will($this->returnValue($attachments));
 
         $phpMailer = $this->getMockBuilder('\PHPMailer\PHPMailer\PHPMailer')->getMock();
         $phpMailer->expects($this->never())->method('isSMTP');
@@ -40,6 +45,7 @@ class PhpMailerTest extends BaseTestCase
         $phpMailer->expects($this->once())->method('clearBCCs');
         $phpMailer->expects($this->once())->method('clearReplyTos');
         $phpMailer->expects($this->once())->method('clearCustomHeaders');
+        $phpMailer->expects($this->once())->method('clearAttachments');
         $phpMailer->expects($this->once())->method('setFrom')->with($this->equalTo($from));
         $phpMailer->expects($this->once())->method('addReplyTo')->with($this->equalTo($replyTo));
         $phpMailer->expects($this->once())->method('isHtml')->with($this->equalTo($isHtml));
@@ -66,6 +72,11 @@ class PhpMailerTest extends BaseTestCase
             $mailerHeaders[$arItem[0]] = $arItem[1] ?: null;
         }));
 
+        $mailerAttachments = [];
+        $phpMailer->method('addAttachment')->will($this->returnCallback(function ($path, $name) use (&$mailerAttachments) {
+            $mailerAttachments[$name] = $path;
+        }));
+
         $options = $this->getMockBuilder('\marvin255\bxmailer\OptionsInterface')->getMock();
 
         $mailer = new PhpMailer($phpMailer, $options);
@@ -77,6 +88,7 @@ class PhpMailerTest extends BaseTestCase
         $this->assertSame($cc, $mailerCc);
         $this->assertSame($bcc, $mailerBcc);
         $this->assertSame($headers, $mailerHeaders);
+        $this->assertSame($attachments, $mailerAttachments);
     }
 
     public function testSendSmtp()
@@ -90,6 +102,7 @@ class PhpMailerTest extends BaseTestCase
         $message->method('getCc')->will($this->returnValue([]));
         $message->method('getBcc')->will($this->returnValue([]));
         $message->method('getAdditionalHeaders')->will($this->returnValue([]));
+        $message->method('getAttachments')->will($this->returnValue([]));
 
         $options = [
             'is_smtp' => true,
@@ -145,6 +158,7 @@ class PhpMailerTest extends BaseTestCase
         $message->method('getCc')->will($this->returnValue([]));
         $message->method('getBcc')->will($this->returnValue([]));
         $message->method('getAdditionalHeaders')->will($this->returnValue([]));
+        $message->method('getAttachments')->will($this->returnValue([]));
 
         $mailer = new PhpMailer($phpMailer, $optionsBag);
 

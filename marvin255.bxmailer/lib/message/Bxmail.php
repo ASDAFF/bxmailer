@@ -184,6 +184,7 @@ class Bxmail implements MessageInterface
                 'reply-to',
                 'content-type',
                 'content-transfer-encoding',
+                'add-file',
             ];
             $allHeaders = $this->getAllHeaders();
             foreach ($allHeaders as $name => $value) {
@@ -195,6 +196,27 @@ class Bxmail implements MessageInterface
         }
 
         return $this->handled['additionalHeaders'];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getAttachments()
+    {
+        if (!isset($this->handled['attachments'])) {
+            $attachments = $this->searchHeader('add-file');
+            $this->handled['attachments'] = [];
+            if ($attachments) {
+                foreach (explode(';', $attachments) as $attachment) {
+                    $arAttachment = explode('=>', $attachment);
+                    if (!empty($arAttachment[0]) && !empty($arAttachment[1])) {
+                        $this->handled['attachments'][$arAttachment[1]] = $arAttachment[0];
+                    }
+                }
+            }
+        }
+
+        return $this->handled['attachments'];
     }
 
     /**

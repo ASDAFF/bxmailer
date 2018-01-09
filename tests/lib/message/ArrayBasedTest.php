@@ -112,4 +112,23 @@ class ArrayBasedTest extends BaseTestCase
             $message->getAdditionalHeaders()
         );
     }
+
+    public function testGetAttachments()
+    {
+        $attachments = [
+            'key_1_' . mt_rand() => 'val_1_' . mt_rand(),
+            'key_2_' . mt_rand() => 'val_2_' . mt_rand(),
+        ];
+        $message = new ArrayBased(['attachments' => $attachments]);
+        $message2 = new ArrayBased(['attachments' => null]);
+
+        $this->assertEquals(
+            $attachments,
+            $message->getAttachments()
+        );
+        $this->assertEquals(
+            [],
+            $message2->getAttachments()
+        );
+    }
 }

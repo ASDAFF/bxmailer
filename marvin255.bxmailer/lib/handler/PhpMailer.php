@@ -104,6 +104,9 @@ class PhpMailer implements HandlerInterface
         foreach ($message->getAdditionalHeaders() as $key => $value) {
             $mailer->addCustomHeader("{$key}: {$value}");
         }
+        foreach ($message->getAttachments() as $key => $value) {
+            $mailer->addAttachment($value, $key);
+        }
         if ($message->getReplyTo()) {
             $mailer->addReplyTo($message->getReplyTo());
         }
@@ -133,6 +136,7 @@ class PhpMailer implements HandlerInterface
         $mailer->clearReplyTos();
         $mailer->clearAllRecipients();
         $mailer->clearCustomHeaders();
+        $mailer->clearAttachments();
         $mailer->From = '';
         $mailer->FromName = '';
         $mailer->Subject = '';

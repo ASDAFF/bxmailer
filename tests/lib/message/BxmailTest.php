@@ -178,4 +178,33 @@ class BxmailTest extends BaseTestCase
             $message->getAdditionalHeaders()
         );
     }
+
+    public function testGetAttachments()
+    {
+        $attachments = [
+            'key_1_' . mt_rand() => 'val_1_' . mt_rand(),
+            'key_2_' . mt_rand() => 'val_2_' . mt_rand(),
+        ];
+
+        $header = '';
+        foreach ($attachments as $key => $value) {
+            if ($header !== '') {
+                $header .= ';';
+            }
+            $header .= "{$value}=>{$key}";
+        }
+
+        $message = new Bxmail(
+            'test@test.test',
+            'test',
+            'test',
+            "CC: test@test.test\r\n"
+                . 'ADD-FILE: ' . $header . "\r\n"
+        );
+
+        $this->assertEquals(
+            $attachments,
+            $message->getAttachments()
+        );
+    }
 }

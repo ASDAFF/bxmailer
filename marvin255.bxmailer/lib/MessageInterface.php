@@ -70,4 +70,12 @@ interface MessageInterface
      * @return array
      */
     public function getAdditionalHeaders();
+
+    /**
+     * Возвращает массив с файлами для вложений.
+     * В формате "Имя файла, с которым он будет приложен к письму => полный путь к файлу на сервере".
+     *
+     * @return array
+     */
+    public function getAttachments();
 }
