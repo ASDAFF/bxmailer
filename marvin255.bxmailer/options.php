@@ -106,6 +106,11 @@ if ((!empty($save) || !empty($restore)) && $request->isPost() && check_bitrix_se
                     } else {
                         $result.css('overflow-x', 'auto');
                     }
+                    if ($result.height() > 500) {
+                        $result.css('overflow-y', 'scroll').height(500);
+                    } else {
+                        $result.css('overflow-y', 'auto').height('auto');
+                    }
                 }).fail(function() {
                     $result.css('color', 'red')
                         .empty()
@@ -275,6 +280,36 @@ $tabControl->begin();
             </td>
             <td style="width: 60%;">
                 <input type="text" size="50" name="message" value="<?php echo Loc::getMessage('MARVIN255_BXMAILER_TEST_MESSAGE_TEXT') ?>">
+            </td>
+        </tr>
+        <tr>
+            <td style="width: 40%;">
+                <label>
+                    <?php echo Loc::getMessage('MARVIN255_BXMAILER_TEST_ATTACHMENT') ?>:
+                </label>
+            </td>
+            <td style="width: 60%;">
+                <input type="text" size="30" id="attachment" name="attachment" value="">
+                <button type="button" onclick="attachmentClick(); return false;">
+                    <?php echo Loc::getMessage('MARVIN255_BXMAILER_TEST_ATTACHMENT_SELECT') ?>
+                </button>
+                <?php
+                    CAdminFileDialog::ShowScript([
+                        'event' => 'attachmentClick',
+                        'arResultDest' => [
+                            'ELEMENT_ID' => 'attachment',
+                        ],
+                        'arPath' => [
+                            'PATH' => '/upload',
+                        ],
+                        'select' => 'F',
+                        'operation' => 'O',
+                        'showUploadTab' => true,
+                        'showAddToMenuTab' => false,
+                        'allowAllFiles' => false,
+                        'SaveConfig' => false,
+                    ]);
+                ?>
             </td>
         </tr>
         <tr>

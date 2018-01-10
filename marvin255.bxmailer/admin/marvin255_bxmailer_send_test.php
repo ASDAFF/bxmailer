@@ -22,6 +22,11 @@ if (!$USER->isAdmin()) {
     throw new Exception('Access denied');
 }
 
+$root = Application::getInstance()
+    ->getContext()
+    ->getServer()
+    ->getDocumentRoot();
+
 $posted = Application::getInstance()
     ->getContext()
     ->getRequest()
@@ -39,12 +44,16 @@ if (!empty($posted['to']) && !empty($posted['subject']) && check_bitrix_sessid()
     if ($mailer->getHandler() instanceof HandlerDebugInterface) {
         $mailer->getHandler()->setDebug();
     }
+    //attachment
     $message = new ArrayBased([
         'to' => array_map('trim', explode(',', $posted['to'])),
         'subject' => isset($posted['subject']) ? $posted['subject'] : '',
         'message' => isset($posted['message']) ? $posted['message'] : '',
         'isHtml' => !empty($posted['isHtml']),
         'from' => empty($posted['from']) ? '' : $posted['from'],
+        'attachments' => empty($posted['attachment'])
+            ? []
+            : ['тестовый файл.' . pathinfo($posted['attachment'], PATHINFO_EXTENSION) => $root . $posted['attachment']],
     ]);
     ob_start();
     ob_implicit_flush(false);

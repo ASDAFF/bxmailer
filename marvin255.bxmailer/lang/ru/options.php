@@ -18,6 +18,8 @@ $MESS['MARVIN255_BXMAILER_TEST_SEND'] = 'Отправить';
 $MESS['MARVIN255_BXMAILER_TEST_RESULT'] = 'Результат';
 $MESS['MARVIN255_BXMAILER_TEST_MESSAGE_TEXT'] = 'Тестовое сообщение из модуля marvin255.bxmailer';
 $MESS['MARVIN255_BXMAILER_TEST_SUBJECT_TEXT'] = 'Тестовое сообщение из модуля marvin255.bxmailer';
+$MESS['MARVIN255_BXMAILER_TEST_ATTACHMENT'] = 'Файл для проверки вложений';
+$MESS['MARVIN255_BXMAILER_TEST_ATTACHMENT_SELECT'] = 'Выберите файл';
 
 $MESS['MARVIN255_BXMAILER_TEST_AJAX_ERROR'] = 'Во время ajax запроса произошла ошибка';
 $MESS['MARVIN255_BXMAILER_TEST_AJAX_SENDED'] = 'Сообщение отправлено';
