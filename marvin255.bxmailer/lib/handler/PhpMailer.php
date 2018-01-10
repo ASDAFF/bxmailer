@@ -4,6 +4,7 @@ namespace marvin255\bxmailer\handler;
 
 use PHPMailer\PHPMailer\PHPMailer as PhpMailerLib;
 use marvin255\bxmailer\HandlerInterface;
+use marvin255\bxmailer\HandlerDebugInterface;
 use marvin255\bxmailer\MessageInterface;
 use marvin255\bxmailer\OptionsInterface;
 use marvin255\bxmailer\Exception;
@@ -11,7 +12,7 @@ use marvin255\bxmailer\Exception;
 /**
  * Класс для отправки писем с помощью phpmailer.
  */
-class PhpMailer implements HandlerInterface
+class PhpMailer implements HandlerInterface, HandlerDebugInterface
 {
     /**
      * Объект phpMailer для отправки сообщений.
@@ -26,11 +27,11 @@ class PhpMailer implements HandlerInterface
      */
     protected $options = null;
     /**
-     * Флаг, который указывает, что объект мэйлера настроен.
+     * Флаг, который указывает, что режим отладки включен.
      *
      * @var bool
      */
-    protected $isSetHandlerSettings = false;
+    protected $debug = false;
 
     /**
      * Конструктор.
@@ -49,11 +50,6 @@ class PhpMailer implements HandlerInterface
      */
     public function send(MessageInterface $message)
     {
-        if (!$this->isSetHandlerSettings) {
-            $this->isSetHandlerSettings = true;
-            $this->setHandlerSettings($this->mailer, $this->options);
-        }
-
         $return = false;
 
         if (function_exists('mb_internal_encoding') && ((int) ini_get('mbstring.func_overload')) & 2) {
@@ -62,12 +58,17 @@ class PhpMailer implements HandlerInterface
         }
 
         try {
-            $return = $this->setMessageSettings($this->mailer, $message)->send();
+            $this->setHandlerSettings($this->mailer, $this->options);
+            $this->setMessageSettings($this->mailer, $message);
+            $return = $this->mailer->send();
         } catch (\PHPMailer\PHPMailer\Exception $e) {
             $return = false;
         } finally {
             if (isset($mbEncoding)) {
                 mb_internal_encoding($mbEncoding);
+            }
+            if ($this->options->getBool('is_smtp', false)) {
+                $this->mailer->smtpClose();
             }
         }
 
@@ -168,11 +169,34 @@ class PhpMailer implements HandlerInterface
             if (!$options->getBool('smtp_auth', false)) {
                 $mailer->SMTPAutoTLS = false;
             }
-            if ($options->getInt('smtp_debug', 0) > 0) {
-                $mailer->SMTPDebug = $options->getInt('smtp_debug', 0);
+            if ($this->getDebug()) {
+                $this->mailer->SMTPDebug = 2;
+                $this->mailer->Debugoutput = 'echo';
+            } else {
+                $this->mailer->SMTPDebug = 0;
             }
+        } else {
+            $mailer->isMail();
         }
 
         return $mailer;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function setDebug($debugMode = true)
+    {
+        $this->debug = (bool) $debugMode;
+
+        return $this;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getDebug()
+    {
+        return $this->debug;
     }
 }

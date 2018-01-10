@@ -50,6 +50,7 @@ class PhpMailerTest extends BaseTestCase
         $phpMailer->expects($this->once())->method('addReplyTo')->with($this->equalTo($replyTo));
         $phpMailer->expects($this->once())->method('isHtml')->with($this->equalTo($isHtml));
         $phpMailer->expects($this->once())->method('send')->will($this->returnValue(true));
+        $phpMailer->expects($this->never())->method('smtpClose');
 
         $mailerTo = [];
         $phpMailer->method('addAddress')->will($this->returnCallback(function ($item) use (&$mailerTo) {
@@ -96,6 +97,7 @@ class PhpMailerTest extends BaseTestCase
         $phpMailer = $this->getMockBuilder('\PHPMailer\PHPMailer\PHPMailer')->getMock();
         $phpMailer->method('send')->will($this->returnValue(true));
         $phpMailer->expects($this->once())->method('isSMTP');
+        $phpMailer->expects($this->once())->method('smtpClose');
 
         $message = $this->getMockBuilder('\marvin255\bxmailer\MessageInterface')->getMock();
         $message->method('getTo')->will($this->returnValue([]));
@@ -113,7 +115,6 @@ class PhpMailerTest extends BaseTestCase
             'smtp_secure' => 'secure_' . mt_rand(),
             'smtp_port' => mt_rand(),
             'smtp_auth' => false,
-            'smtp_debug' => mt_rand(),
             'charset' => 'charset_' . mt_rand(),
         ];
         $optionsBag = $this->getMockBuilder('\marvin255\bxmailer\OptionsInterface')->getMock();
@@ -129,6 +130,7 @@ class PhpMailerTest extends BaseTestCase
 
         $mailer = new PhpMailer($phpMailer, $optionsBag);
 
+        $mailer->setDebug(false);
         $mailer->send($message);
 
         $this->assertSame($options['smtp_timeout'], $phpMailer->Timeout, 'smtp_timeout option');
@@ -140,7 +142,59 @@ class PhpMailerTest extends BaseTestCase
         $this->assertSame($options['charset'], $phpMailer->CharSet, 'charset option');
         $this->assertSame(false, $phpMailer->SMTPAuth, 'SMTPAuth option');
         $this->assertSame(false, $phpMailer->SMTPAutoTLS, 'SMTPAutoTLS option');
-        $this->assertSame($options['smtp_debug'], $phpMailer->SMTPDebug, 'SMTPDebug option');
+        $this->assertSame(0, $phpMailer->SMTPDebug, 'SMTPDebug option');
+    }
+
+    public function testSendSmtpDebug()
+    {
+        $phpMailer = $this->getMockBuilder('\PHPMailer\PHPMailer\PHPMailer')->getMock();
+        $phpMailer->method('send')->will($this->returnValue(true));
+        $phpMailer->expects($this->once())->method('isSMTP');
+
+        $message = $this->getMockBuilder('\marvin255\bxmailer\MessageInterface')->getMock();
+        $message->method('getTo')->will($this->returnValue([]));
+        $message->method('getCc')->will($this->returnValue([]));
+        $message->method('getBcc')->will($this->returnValue([]));
+        $message->method('getAdditionalHeaders')->will($this->returnValue([]));
+        $message->method('getAttachments')->will($this->returnValue([]));
+
+        $options = [
+            'is_smtp' => true,
+            'smtp_timeout' => mt_rand(),
+            'smtp_host' => 'host_' . mt_rand(),
+            'smtp_login' => 'login_' . mt_rand(),
+            'smtp_password' => 'password_' . mt_rand(),
+            'smtp_secure' => 'secure_' . mt_rand(),
+            'smtp_port' => mt_rand(),
+            'smtp_auth' => false,
+            'charset' => 'charset_' . mt_rand(),
+        ];
+        $optionsBag = $this->getMockBuilder('\marvin255\bxmailer\OptionsInterface')->getMock();
+        $optionsBag->method('getInt')->will($this->returnCallback(function ($name, $def) use ($options) {
+            return isset($options[$name]) ? $options[$name] : $def;
+        }));
+        $optionsBag->method('getBool')->will($this->returnCallback(function ($name, $def) use ($options) {
+            return isset($options[$name]) ? $options[$name] : $def;
+        }));
+        $optionsBag->method('get')->will($this->returnCallback(function ($name, $def) use ($options) {
+            return isset($options[$name]) ? $options[$name] : $def;
+        }));
+
+        $mailer = new PhpMailer($phpMailer, $optionsBag);
+
+        $mailer->setDebug(true);
+        $mailer->send($message);
+
+        $this->assertSame($options['smtp_timeout'], $phpMailer->Timeout, 'smtp_timeout option');
+        $this->assertSame($options['smtp_host'], $phpMailer->Host, 'smtp_host option');
+        $this->assertSame($options['smtp_login'], $phpMailer->Username, 'smtp_login option');
+        $this->assertSame($options['smtp_password'], $phpMailer->Password, 'smtp_password option');
+        $this->assertSame($options['smtp_port'], $phpMailer->Port, 'smtp_port option');
+        $this->assertSame($options['smtp_secure'], $phpMailer->SMTPSecure, 'smtp_secure option');
+        $this->assertSame($options['charset'], $phpMailer->CharSet, 'charset option');
+        $this->assertSame(false, $phpMailer->SMTPAuth, 'SMTPAuth option');
+        $this->assertSame(false, $phpMailer->SMTPAutoTLS, 'SMTPAutoTLS option');
+        $this->assertSame(2, $phpMailer->SMTPDebug, 'SMTPDebug option');
     }
 
     public function testSendException()
@@ -164,5 +218,16 @@ class PhpMailerTest extends BaseTestCase
 
         $this->setExpectedException('\marvin255\bxmailer\Exception', $exc);
         $mailer->send($message);
+    }
+
+    public function testGetDebug()
+    {
+        $phpMailer = $this->getMockBuilder('\PHPMailer\PHPMailer\PHPMailer')->getMock();
+        $optionsBag = $this->getMockBuilder('\marvin255\bxmailer\OptionsInterface')->getMock();
+        $mailer = new PhpMailer($phpMailer, $optionsBag);
+
+        $this->assertSame(false, $mailer->getDebug(), 'default debug status');
+        $this->assertSame($mailer, $mailer->setDebug(), 'return self after setDebug');
+        $this->assertSame(true, $mailer->getDebug(), 'set debug');
     }
 }

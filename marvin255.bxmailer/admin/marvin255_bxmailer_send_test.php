@@ -5,6 +5,7 @@ use Bitrix\Main\Application;
 use Bitrix\Main\Localization\Loc;
 use marvin255\bxmailer\Mailer;
 use marvin255\bxmailer\message\ArrayBased;
+use marvin255\bxmailer\HandlerDebugInterface;
 
 require_once $_SERVER['DOCUMENT_ROOT'] . '/bitrix/modules/main/include/prolog_admin_before.php';
 require_once $_SERVER['DOCUMENT_ROOT'] . '/bitrix/modules/main/include/prolog.php';
@@ -35,6 +36,9 @@ $res = [
 
 if (!empty($posted['to']) && !empty($posted['subject']) && check_bitrix_sessid()) {
     $mailer = Mailer::getInstance();
+    if ($mailer->getHandler() instanceof HandlerDebugInterface) {
+        $mailer->getHandler()->setDebug();
+    }
     $message = new ArrayBased([
         'to' => array_map('trim', explode(',', $posted['to'])),
         'subject' => isset($posted['subject']) ? $posted['subject'] : '',
