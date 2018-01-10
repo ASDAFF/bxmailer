@@ -77,7 +77,8 @@ if (function_exists('custom_mail')) {
             ]
         );
         $messageEvent->send();
+        $messageContainer = $messageEvent->getParameter('messageContainer');
 
-        return $mailer->send($messageContainer);
+        return Mailer::getInstance()->send($messageContainer);
     }
 }

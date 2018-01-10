@@ -14,6 +14,7 @@
 * [Установка](#Установка).
 * [Настройка](#Настройка).
 * [Замена транспорта](#Замена-транспорта).
+* [Замена сообщения](#Замена-сообщения).
 * [Благодарности](#Благодарности).
 
 
@@ -80,14 +81,44 @@ if (!\Bitrix\Main\Loader::includeModule('marvin255.bxmailer')) {
 В основе модуля лежит библиотека [phpMailer](https://github.com/PHPMailer/PHPMailer). Соответственно отправка сообщений осуществляется с помощью phpMailer. Для того, чтобы заменить phpMailer на любой другой транспорт можно использовать событие:
 
 ```php
-AddEventHandler('marvin255.bxmailer', 'createHandler', 'createHandlerHandler');
-function createHandlerHandler($mailer)
+use Bitrix\Main\EventManager;
+use Bitrix\Main\Event;
+use Bitrix\Main\Loader;
+
+EventManager::getInstance()->addEventHandler('marvin255.bxmailer', 'createHandler', 'createHandlerHandler');
+function createHandlerHandler(Event $event)
 {
-    $mailer->setHandler(new MyAwesomeHandler);
+    $event->getParameter('mailer')->setHandler(new MyAwesomeHandler);
 }
 ```
 
 Для того, чтобы все заработало, класс `MyAwesomeHandler` должен реализовывать интерфейс [`\marvin255\bxmailer\HandlerInterface`](https://github.com/marvin255/bxmailer/blob/master/marvin255.bxmailer/lib/HandlerInterface.php).
+
+
+
+## Замена сообщения
+
+Данные письма для транспорта передаются через объект сообщения, который тоже можно заменить с помощью события. Вместе с событием так же передается объект оригинального сообщения, а так же все исходные параметры письма.
+
+```php
+use Bitrix\Main\EventManager;
+use Bitrix\Main\Event;
+use Bitrix\Main\Loader;
+
+EventManager::getInstance()->addEventHandler('marvin255.bxmailer', 'createMessage', 'createMessageHandler');
+function createMessageHandler(Event $event)
+{
+    //$event->getParameter('messageContainer');
+    //$event->getParameter('to');
+    //$event->getParameter('subject');
+    //$event->getParameter('message');
+    //$event->getParameter('additional_headers');
+    //$event->getParameter('additional_parameters');
+    $event->setParameter('messageContainer', new MyAwesomeMessage);
+}
+```
+
+Для того, чтобы все заработало, класс `MyAwesomeMessage` должен реализовывать интерфейс [`\marvin255\bxmailer\MessageInterface`](https://github.com/marvin255/bxmailer/blob/master/marvin255.bxmailer/lib/MessageInterface.php).
 
 
 
