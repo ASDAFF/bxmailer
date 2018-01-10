@@ -83,7 +83,6 @@ if (!\Bitrix\Main\Loader::includeModule('marvin255.bxmailer')) {
 ```php
 use Bitrix\Main\EventManager;
 use Bitrix\Main\Event;
-use Bitrix\Main\Loader;
 
 EventManager::getInstance()->addEventHandler('marvin255.bxmailer', 'createHandler', 'createHandlerHandler');
 function createHandlerHandler(Event $event)
@@ -103,7 +102,6 @@ function createHandlerHandler(Event $event)
 ```php
 use Bitrix\Main\EventManager;
 use Bitrix\Main\Event;
-use Bitrix\Main\Loader;
 
 EventManager::getInstance()->addEventHandler('marvin255.bxmailer', 'createMessage', 'createMessageHandler');
 function createMessageHandler(Event $event)
