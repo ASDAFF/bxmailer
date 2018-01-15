@@ -39,7 +39,12 @@ try {
             'line' => $e->getLine(),
         ], JSON_UNESCAPED_UNICODE),
     ]);
-    define('MARVIN255_BXMAILER_NO_INJECT', true);
+}
+
+//если установлен флаг, который запрещает замену стандартной отправки,
+//то прерываем выполнение скрипта
+if (defined('MARVIN255_BXMAILER_NO_INJECT')) {
+    return;
 }
 
 if (function_exists('custom_mail')) {
@@ -51,7 +56,7 @@ if (function_exists('custom_mail')) {
         'ITEM_ID' => '',
         'DESCRIPTION' => 'custom_mail function already defined',
     ]);
-} elseif (!defined('MARVIN255_BXMAILER_NO_INJECT')) {
+} else {
     //определяем кастомную функцию для отправки писем
     define('MARVIN255_BXMAILER_IS_CUSTOM_MAIL_SET', true);
     function custom_mail($to, $subject, $message, $additional_headers, $additional_parameters)
