@@ -4,6 +4,7 @@ use Bitrix\Main\Localization\Loc;
 use Bitrix\Main\ModuleManager;
 use Bitrix\Main\Config\Option;
 use Bitrix\Main\Application;
+use Bitrix\Main\EventManager;
 
 Loc::loadMessages(__FILE__);
 
@@ -54,6 +55,17 @@ class marvin255_bxmailer extends CModule
      */
     public function installDb()
     {
+        $eventManager = EventManager::getInstance();
+        foreach ($this->getEventsList() as $event) {
+            $res = $eventManager->registerEventHandlerCompatible(
+                $event['FROM_MODULE_ID'],
+                $event['EVENT_TYPE'],
+                $this->MODULE_ID,
+                $event['TO_CLASS'],
+                $event['TO_METHOD'],
+                $event['SORT']
+            );
+        }
     }
 
     /**
@@ -63,7 +75,19 @@ class marvin255_bxmailer extends CModule
      */
     public function unInstallDb()
     {
+        $eventManager = EventManager::getInstance();
+        foreach ($this->getEventsList() as $event) {
+            $eventManager->unRegisterEventHandler(
+                $event['FROM_MODULE_ID'],
+                $event['EVENT_TYPE'],
+                $this->MODULE_ID,
+                $event['TO_CLASS'],
+                $event['TO_METHOD']
+            );
+        }
+
         CAgent::RemoveModuleAgents($this->MODULE_ID);
+
         Option::delete($this->MODULE_ID);
     }
 
@@ -97,5 +121,23 @@ class marvin255_bxmailer extends CModule
     public function getInstallatorPath()
     {
         return str_replace('\\', '/', __DIR__);
+    }
+
+    /**
+     * Возвращает список событий, которые должны быть установлены для данного модуля.
+     *
+     * @return array
+     */
+    protected function getEventsList()
+    {
+        return [
+            [
+                'FROM_MODULE_ID' => 'main',
+                'EVENT_TYPE' => 'OnEventLogGetAuditTypes',
+                'TO_CLASS' => '\marvin255\bxmailer\EventHandler',
+                'TO_METHOD' => 'onEventLogGetAuditTypes',
+                'SORT' => '1800',
+            ],
+        ];
     }
 }
