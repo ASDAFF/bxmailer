@@ -60,17 +60,7 @@ class MailerTest extends BaseTestCase
         $mailer = Mailer::getInstance(true);
         $mailer->setHandler($handler);
 
-        $this->assertSame(
-            false,
-            $mailer->send($message)
-        );
-        $this->assertSame(
-            $exception,
-            $mailer->getLastError()
-        );
-        $this->assertContains(
-            $exception,
-            \CEventLog::$add['DESCRIPTION']
-        );
+        $this->setExpectedException('\marvin255\bxmailer\Exception', $exception);
+        $mailer->send($message);
     }
 }

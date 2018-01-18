@@ -44,7 +44,6 @@ if (!empty($posted['to']) && !empty($posted['subject']) && check_bitrix_sessid()
     if ($mailer->getHandler() instanceof HandlerDebugInterface) {
         $mailer->getHandler()->setDebug();
     }
-    //attachment
     $message = new ArrayBased([
         'to' => array_map('trim', explode(',', $posted['to'])),
         'subject' => isset($posted['subject']) ? $posted['subject'] : '',
@@ -57,8 +56,12 @@ if (!empty($posted['to']) && !empty($posted['subject']) && check_bitrix_sessid()
     ]);
     ob_start();
     ob_implicit_flush(false);
-    $res['status'] = $mailer->send($message, true);
-    $res['error'] = $mailer->getLastError();
+    try {
+        $res['status'] = $mailer->send($message, true);
+        $res['error'] = '';
+    } catch (\Exception $e) {
+        $res['error'] = $e->getMessage();
+    }
     $res['printed_data'] = ob_get_clean();
 }
 

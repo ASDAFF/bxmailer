@@ -13,6 +13,9 @@ require_once __DIR__ . '/lib/Autoloader.php';
 Autoloader::register('\\marvin255\\bxmailer', __DIR__ . '/lib');
 Autoloader::register('\\PHPMailer\\PHPMailer', __DIR__ . '/phpmailer');
 
+//флаг, который указывает, что нужно заменить отпраку на отправку модулем
+$isInject = !defined('MARVIN255_BXMAILER_NO_INJECT');
+
 //запускаем событие, чтобы дать возможность другому модулю прописать свой обработчик
 try {
     $mailer = Mailer::getInstance();
@@ -26,64 +29,102 @@ try {
         ));
     }
 } catch (Exception $e) {
+    $isInject = false;
+    //логируем исключение при инциализации обработчика
     CEventLog::add([
         'SEVERITY' => 'ERROR',
         'AUDIT_TYPE_ID' => 'bxmailer_initialize_error',
         'MODULE_ID' => 'marvin255.bxmailer',
-        'ITEM_ID' => '',
+        'ITEM_ID' => $e->getPrevious()
+            ? $e->getPrevious()->getFile()
+            : $e->getFile(),
         'DESCRIPTION' => json_encode([
             'class' => get_class($e),
             'message' => $e->getMessage(),
             'code' => $e->getCode(),
-            'file' => $e->getFile(),
-            'line' => $e->getLine(),
+            'file' => $e->getPrevious()
+                ? $e->getPrevious()->getFile()
+                : $e->getFile(),
+            'line' => $e->getPrevious()
+                ? $e->getPrevious()->getLine()
+                : $e->getLine(),
         ], JSON_UNESCAPED_UNICODE),
     ]);
 }
 
-//если установлен флаг, который запрещает замену стандартной отправки,
-//то прерываем выполнение скрипта
-if (defined('MARVIN255_BXMAILER_NO_INJECT')) {
-    return;
-}
-
 if (function_exists('custom_mail')) {
+    $isInject = false;
     //если кастомная отправка уже определена, то помечаем это в логе
     CEventLog::add([
         'SEVERITY' => 'ERROR',
         'AUDIT_TYPE_ID' => 'bxmailer_initialize_error',
         'MODULE_ID' => 'marvin255.bxmailer',
-        'ITEM_ID' => '',
+        'ITEM_ID' => __FILE__,
         'DESCRIPTION' => 'custom_mail function already defined',
     ]);
-} else {
-    //определяем кастомную функцию для отправки писем
+}
+
+//если произошла ошибка, то выходим из скрипта
+if ($isInject) {
+    //определяем константу, которая указывает, что модуль заинжектил отправку
     define('MARVIN255_BXMAILER_IS_CUSTOM_MAIL_SET', true);
+
+    //определяем кастомную функцию для отправки писем
     function custom_mail($to, $subject, $message, $additional_headers, $additional_parameters)
     {
-        $messageContainer = new Bxmail(
-            $to,
-            $subject,
-            $message,
-            $additional_headers,
-            $additional_parameters
-        );
-        //выбрасываем событие для того, чтобы можно было заменить тип сообщения
-        $messageEvent = new Event(
-            'marvin255.bxmailer',
-            'createMessage',
-            [
-                'messageContainer' => $messageContainer,
-                'to' => $to,
-                'subject' => $subject,
-                'message' => $message,
-                'additional_headers' => $additional_headers,
-                'additional_parameters' => $additional_parameters,
-            ]
-        );
-        $messageEvent->send();
-        $messageContainer = $messageEvent->getParameter('messageContainer');
+        $return = false;
 
-        return Mailer::getInstance()->send($messageContainer);
+        try {
+            //инициируем стандартное сообщение из параметров custom_mail
+            $messageContainer = new Bxmail(
+                $to,
+                $subject,
+                $message,
+                $additional_headers,
+                $additional_parameters
+            );
+
+            //выбрасываем событие для того, чтобы можно было заменить тип сообщения
+            $messageEvent = new Event(
+                'marvin255.bxmailer',
+                'createMessage',
+                [
+                    'messageContainer' => $messageContainer,
+                    'to' => $to,
+                    'subject' => $subject,
+                    'message' => $message,
+                    'additional_headers' => $additional_headers,
+                    'additional_parameters' => $additional_parameters,
+                ]
+            );
+            $messageEvent->send();
+            $messageContainer = $messageEvent->getParameter('messageContainer');
+
+            //непосредственная отправка сообщения
+            $return = Mailer::getInstance()->send($messageContainer);
+        } catch (Exception $e) {
+            //логируем исключение при отправке письма
+            CEventLog::add([
+                'SEVERITY' => 'ERROR',
+                'AUDIT_TYPE_ID' => 'bxmailer_send_error',
+                'MODULE_ID' => 'marvin255.bxmailer',
+                'ITEM_ID' => $e->getPrevious()
+                    ? $e->getPrevious()->getFile()
+                    : $e->getFile(),
+                'DESCRIPTION' => json_encode([
+                    'class' => get_class($e),
+                    'message' => $e->getMessage(),
+                    'code' => $e->getCode(),
+                    'file' => $e->getPrevious()
+                        ? $e->getPrevious()->getFile()
+                        : $e->getFile(),
+                    'line' => $e->getPrevious()
+                        ? $e->getPrevious()->getLine()
+                        : $e->getLine(),
+                ], JSON_UNESCAPED_UNICODE),
+            ]);
+        }
+
+        return $return;
     }
 }

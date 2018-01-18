@@ -2,8 +2,6 @@
 
 namespace marvin255\bxmailer;
 
-use CEventLog;
-
 /**
  * Класс для отправки сообщений.
  *
@@ -52,20 +50,20 @@ class Mailer
      * @param \marvin255\bxmailer\MessageInterface $message
      *
      * @return bool
+     *
+     * @throws \marvin255\bxmailer\Exception
      */
     public function send(MessageInterface $message)
     {
-        $handler = $this->getHandler();
+        $return = false;
 
         try {
-            $res = $handler->send($message);
+            $return = $this->getHandler()->send($message);
         } catch (\Exception $e) {
-            $this->lastError = $e->getMessage();
-            $this->logException($e, 'send_error', get_class($handler) . '::send');
-            $res = false;
+            throw new Exception($e->getMessage(), null, $e);
         }
 
-        return $res;
+        return $return;
     }
 
     /**
@@ -97,50 +95,5 @@ class Mailer
     public function getHandler()
     {
         return $this->handler;
-    }
-
-    /**
-     * Последняя ошибка, которую прислал обюработчик отправки.
-     *
-     * @var string
-     */
-    protected $lastError = null;
-
-    /**
-     * Возвращает последнюю ошибку, которую прислал обюработчик отправки.
-     *
-     * @return string|null
-     */
-    public function getLastError()
-    {
-        return $this->lastError;
-    }
-
-    /**
-     * Логирует исключение в битриксе.
-     *
-     * @param \Exception $e
-     * @param string     $type
-     * @param string     $item
-     *
-     * @return \Exception
-     */
-    protected function logException(\Exception $e, $type = 'error', $item = '\marvin255\bxmailer\Mailer::send')
-    {
-        CEventLog::add([
-            'SEVERITY' => 'ERROR',
-            'AUDIT_TYPE_ID' => 'bxmailer_' . $type,
-            'MODULE_ID' => 'marvin255.bxmailer',
-            'ITEM_ID' => $item,
-            'DESCRIPTION' => json_encode([
-                'class' => get_class($e),
-                'message' => $e->getMessage(),
-                'code' => $e->getCode(),
-                'file' => $e->getFile(),
-                'line' => $e->getLine(),
-            ], JSON_UNESCAPED_UNICODE),
-        ]);
-
-        return $e;
     }
 }

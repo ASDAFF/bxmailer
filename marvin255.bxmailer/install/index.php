@@ -130,14 +130,6 @@ class marvin255_bxmailer extends CModule
      */
     protected function getEventsList()
     {
-        return [
-            [
-                'FROM_MODULE_ID' => 'main',
-                'EVENT_TYPE' => 'OnEventLogGetAuditTypes',
-                'TO_CLASS' => '\marvin255\bxmailer\EventHandler',
-                'TO_METHOD' => 'onEventLogGetAuditTypes',
-                'SORT' => '1800',
-            ],
-        ];
+        return [];
     }
 }
