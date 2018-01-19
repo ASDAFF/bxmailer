@@ -30,7 +30,7 @@ $MESS['MARVIN255_BXMAILER_PRESENTED_BY_PHPMAILER'] = 'В основе модул
 $MESS['MARVIN255_BXMAILER_MODULE_IS_UNPLUGGED'] = '<b>Отправка писем через модуль не настроена</b><br>'
     . '<div style="font-weight: normal;">Убедитесь, что в вашем init.php прописано подключение модуля:<br>'
     . '\\Bitrix\\Main\\Loader::includeModule(\'marvin255.bxmailer\');<br>'
-    . 'или проверьте журнал событий на наличие ошибок "<a href="http://stroitel-dev.ru/bitrix/admin/event_log.php?lang=ru&set_filter=Y&adm_filter_applied=0&find=bxmailer_initialize_error&find_type=audit_type_id">bxmailer_initialize_error</a>"'
+    . 'или проверьте журнал событий на наличие ошибок "<a href="/bitrix/admin/event_log.php?lang=ru&set_filter=Y&adm_filter_applied=0&find=bxmailer_initialize_error&find_type=audit_type_id">bxmailer_initialize_error</a>"'
     . '</div>';
 
 $MESS['MARVIN255_BXMAILER_SMTP'] = '<table><tr>'
