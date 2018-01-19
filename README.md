@@ -35,12 +35,14 @@
 2. Если требуется автоматическое обновление библиотеки через composer, то добавьте в раздел `scripts`:
 
     ```javascript
-    "scripts": [
-        {
-            "post-install-cmd": "\\marvin255\\bxmailer\\installer\\Composer::injectModule",
-            "post-update-cmd": "\\marvin255\\bxmailer\\installer\\Composer::injectModule",
-        }
-    ]
+    "scripts": {
+        "post-install-cmd": [
+            "\\marvin255\\bxmailer\\installer\\Composer::injectModule"
+        ],
+        "post-update-cmd": [
+            "\\marvin255\\bxmailer\\installer\\Composer::injectModule"
+        ]
+    }
     ```
 
 3. Выполните в консоли внутри вашего проекта:
