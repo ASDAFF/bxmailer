@@ -159,7 +159,7 @@ class PhpMailer implements HandlerInterface, HandlerDebugInterface
         $mailer->CharSet = $options->get('charset', 'UTF-8');
         if ($options->getBool('is_smtp', false)) {
             $mailer->isSMTP();
-            $mailer->Timeout = intval($options->getInt('smtp_timeout')) ?: 15;
+            $mailer->Timeout = $options->getInt('smtp_timeout') ?: 15;
             $mailer->Host = $options->get('smtp_host', '');
             $mailer->Username = $options->get('smtp_login', '');
             $mailer->Password = $options->get('smtp_password', '');
