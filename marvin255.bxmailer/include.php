@@ -54,13 +54,16 @@ try {
 
 if (function_exists('custom_mail')) {
     $isInject = false;
+    //инициируем класс рефлексии, чтобы понть где уже определена функция
+    $reflection = new ReflectionFunction('custom_mail');
     //если кастомная отправка уже определена, то помечаем это в логе
     CEventLog::add([
         'SEVERITY' => 'ERROR',
         'AUDIT_TYPE_ID' => 'bxmailer_initialize_error',
         'MODULE_ID' => 'marvin255.bxmailer',
         'ITEM_ID' => __FILE__,
-        'DESCRIPTION' => 'custom_mail function already defined',
+        'DESCRIPTION' => 'custom_mail function already defined in '
+            . $reflection->getFileName(),
     ]);
 }
 
