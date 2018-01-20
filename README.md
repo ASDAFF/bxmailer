@@ -25,7 +25,7 @@
 
     ```javascript
     "require": {
-        "marvin255/bxmailer": "*"
+        "marvin255/bxmailer": "~1.0"
     }
     ```
 
