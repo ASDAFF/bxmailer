@@ -133,6 +133,48 @@ class BxmailTest extends BaseTestCase
         );
     }
 
+    public function testGetMessageFromBoundedContent()
+    {
+        $messageText = 'message_' . mt_rand();
+        $boundedMessage = "------------5a6581c454bf0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+{$messageText}
+
+------------5a6581c454bf0
+Content-Type: text/plain; name=\"=?UTF-8?B?dGVzdC50eHQ=?=\"
+Content-Transfer-Encoding: base64
+
+dGVzdA==
+------------5a6581c454bf0--
+";
+        $message = new Bxmail(
+            'test@test.test',
+            'test',
+            $boundedMessage,
+            "Content-Type: multipart/mixed; boundary=\"----------5a6581c454bf0\"\r\n"
+        );
+
+        $this->assertEquals(
+            $messageText,
+            $message->getMessage()
+        );
+    }
+
+    public function testGetMessageFromBoundedContentException()
+    {
+        $message = new Bxmail(
+            'test@test.test',
+            'test',
+            "------------5a6581c454bf0\n123123",
+            "Content-Type: multipart/mixed; boundary=\"----------5a6581c454bf0\"\r\n"
+        );
+
+        $this->setExpectedException('\marvin255\bxmailer\Exception');
+        $message->getMessage();
+    }
+
     public function testGetIsHtml()
     {
         $message = new Bxmail(
@@ -206,5 +248,42 @@ class BxmailTest extends BaseTestCase
             $attachments,
             $message->getAttachments()
         );
+    }
+
+    public function testGetAttachmentsBoundedContent()
+    {
+        $boundedMessage = '------------5a6581c454bf0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+test
+
+------------5a6581c454bf0
+Content-Type: text/plain; name="=?UTF-8?B?dGVzdC50eHQ=?="
+Content-Transfer-Encoding: base64
+
+dGVzdA==
+
+------------5a6581c454bf0
+Content-Type: text/plain
+Content-Transfer-Encoding: base64
+
+dGVzdA==
+------------5a6581c454bf0--
+';
+        $message = new Bxmail(
+            'test@test.test',
+            'test',
+            $boundedMessage,
+            "Content-Type: multipart/mixed; boundary=\"----------5a6581c454bf0\"\r\n"
+        );
+
+        $attachments = $message->getAttachments();
+
+        $this->assertCount(2, $attachments, 'number of files in attachment');
+        $this->assertArrayHasKey('test.txt', $attachments, 'name from header');
+        foreach ($attachments as $name => $path) {
+            $this->assertFileExists($path, 'file must exists');
+        }
     }
 }

@@ -3,6 +3,7 @@
 namespace marvin255\bxmailer\message;
 
 use marvin255\bxmailer\MessageInterface;
+use marvin255\bxmailer\Exception;
 
 /**
  * Класс для сообщения из параметров, которые приходят в bxmail.
@@ -153,7 +154,27 @@ class Bxmail implements MessageInterface
      */
     public function getMessage()
     {
-        return $this->message;
+        if (!isset($this->handled['message'])) {
+            $this->handled['message'] = '';
+            $contentType = $this->searchHeader('Content-Type');
+            //если в теле письма прописаны вложения, то пробуем получить только текст
+            if (preg_match('/^\s*multipart\/mixed.*boundary="(.+)"\s*$/i', $contentType, $matches)) {
+                $arParts = $this->parseMultipartMessage($this->message, $matches[1]);
+                foreach ($arParts as $part) {
+                    if (
+                        !empty($part['headers']['Content-Transfer-Encoding'])
+                        && $part['headers']['Content-Transfer-Encoding'] === 'base64'
+                    ) {
+                        continue;
+                    }
+                    $this->handled['message'] .= $part['content'];
+                }
+            } else {
+                $this->handled['message'] = $this->message;
+            }
+        }
+
+        return $this->handled['message'];
     }
 
     /**
@@ -199,7 +220,9 @@ class Bxmail implements MessageInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
+     *
+     * @throws \marvin255\bxmailer\Exception
      */
     public function getAttachments()
     {
@@ -212,6 +235,32 @@ class Bxmail implements MessageInterface
                     if (!empty($arAttachment[0]) && !empty($arAttachment[1])) {
                         $this->handled['attachments'][$arAttachment[1]] = $arAttachment[0];
                     }
+                }
+            }
+
+            $contentType = $this->searchHeader('Content-Type');
+            //если в теле письма прописаны вложения, то преобразуем их обратно в файлы
+            if (preg_match('/^\s*multipart\/mixed.*boundary="(.+)"\s*$/i', $contentType, $matches)) {
+                $arParts = $this->parseMultipartMessage($this->message, $matches[1]);
+                foreach ($arParts as $part) {
+                    if (
+                        empty($part['headers']['Content-Transfer-Encoding'])
+                        || $part['headers']['Content-Transfer-Encoding'] !== 'base64'
+                    ) {
+                        continue;
+                    }
+                    if (preg_match('/.*\s*name="(.+)"\s*/i', $part['headers']['Content-Type'], $matches)) {
+                        $name = $this->decodeMimeHeader($matches[1]);
+                    } else {
+                        $name = mt_rand();
+                    }
+                    $file = tempnam(sys_get_temp_dir() ?: '/tmp', 'bxmailer');
+                    if (file_put_contents($file, base64_decode($part['content'])) === false) {
+                        throw new Exception(
+                            "Can't write attachment content to temp file: {$file}"
+                        );
+                    }
+                    $this->handled['attachments'][$name] = $file;
                 }
             }
         }
@@ -227,15 +276,7 @@ class Bxmail implements MessageInterface
     protected function getAllHeaders()
     {
         if (!isset($this->handled['allHeaders'])) {
-            $this->handled['allHeaders'] = [];
-            $explode = explode("\n", $this->additional_headers);
-            foreach ($explode as $strHeader) {
-                if (preg_match('/^([^\:]+)\:(.*)$/', $strHeader, $matches)) {
-                    $key = trim($matches[1]);
-                    $value = trim($matches[2]);
-                    $this->handled['allHeaders'][$key] = $this->decodeMimeHeader($value);
-                }
-            }
+            $this->handled['allHeaders'] = $this->parseHeaders($this->additional_headers);
         }
 
         return $this->handled['allHeaders'];
@@ -264,6 +305,29 @@ class Bxmail implements MessageInterface
     }
 
     /**
+     * Разбирает заголовки из строки в массив.
+     *
+     * @param string $headers
+     *
+     * @return array
+     */
+    protected function parseHeaders($headers)
+    {
+        $return = [];
+
+        $explode = explode("\n", $headers);
+        foreach ($explode as $strHeader) {
+            if (preg_match('/^([^\:]+)\:(.*)$/', $strHeader, $matches)) {
+                $key = trim($matches[1]);
+                $value = trim($matches[2]);
+                $return[$key] = $this->decodeMimeHeader($value);
+            }
+        }
+
+        return $return;
+    }
+
+    /**
      * Декодирует mime заголовок.
      *
      * @param string $header
@@ -276,6 +340,36 @@ class Bxmail implements MessageInterface
             $return = mb_decode_mimeheader(trim($header));
         } else {
             $return = $header;
+        }
+
+        return $return;
+    }
+
+    /**
+     * Разбирает сообщение, в котором есть вложения.
+     *
+     * @param string $message
+     * @param string $boundary
+     *
+     * @return string
+     *
+     * @throws \marvin255\bxmailer\Exception
+     */
+    protected function parseMultipartMessage($message, $boundary)
+    {
+        $boundary = "--{$boundary}";
+        $return = [];
+        $arParts = explode($boundary, $message);
+        $arParts = array_diff(array_map('trim', $arParts), ['', '--']);
+        foreach ($arParts as $part) {
+            $arPart = explode("\n\n", $part, 2);
+            if (!isset($arPart[0], $arPart[1])) {
+                throw new Exception("Can't parse multipart/mixed format in message");
+            }
+            $return[] = [
+                'headers' => $this->parseHeaders($arPart[0]),
+                'content' => $arPart[1],
+            ];
         }
 
         return $return;
