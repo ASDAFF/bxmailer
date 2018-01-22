@@ -199,6 +199,35 @@ dGVzdA==
         );
     }
 
+    public function testGetIsHtmlFromBoundedContent()
+    {
+        $messageText = 'message_' . mt_rand();
+        $boundedMessage = "------------5a6581c454bf0
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+{$messageText}
+
+------------5a6581c454bf0
+Content-Type: text/plain; name=\"=?UTF-8?B?dGVzdC50eHQ=?=\"
+Content-Transfer-Encoding: base64
+
+dGVzdA==
+------------5a6581c454bf0--
+";
+        $message = new Bxmail(
+            'test@test.test',
+            'test',
+            $boundedMessage,
+            "Content-Type: multipart/mixed; boundary=\"----------5a6581c454bf0\"\r\n"
+        );
+
+        $this->assertEquals(
+            true,
+            $message->isHtml()
+        );
+    }
+
     public function testGetAdditionalHeaders()
     {
         $addHeaders = [

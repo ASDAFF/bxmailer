@@ -183,9 +183,20 @@ class Bxmail implements MessageInterface
     public function isHtml()
     {
         if (!isset($this->handled['isHtml'])) {
+            $isHtml = false;
             $contentType = $this->searchHeader('Content-Type');
-            $this->handled['isHtml'] = $contentType
-                && strpos($contentType, 'text/html') !== false;
+            if (preg_match('/^\s*multipart\/mixed.*boundary="(.+)"\s*$/i', $contentType, $matches)) {
+                $arParts = $this->parseMultipartMessage(
+                    $this->message,
+                    $matches[1]
+                );
+                $part = reset($arParts);
+                $isHtml = !empty($part['headers']['Content-Type'])
+                    && strpos($part['headers']['Content-Type'], 'text/html') !== false;
+            } elseif (strpos($contentType, 'text/html') !== false) {
+                $isHtml = true;
+            }
+            $this->handled['isHtml'] = $isHtml;
         }
 
         return $this->handled['isHtml'];
