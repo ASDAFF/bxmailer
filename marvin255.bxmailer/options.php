@@ -30,7 +30,7 @@ $tabControl = new CAdminTabControl('tabControl', [
         'TAB' => Loc::getMessage('MARVIN255_BXMAILER_TAB_TEST'),
         'TITLE' => Loc::getMessage('MARVIN255_BXMAILER_TAB_TEST'),
     ],
-]);
+], false, true);
 
 $isConfigComplete = false;
 if ((!empty($save) || !empty($restore)) && $request->isPost() && check_bitrix_sessid()) {
@@ -82,6 +82,13 @@ if ((!empty($save) || !empty($restore)) && $request->isPost() && check_bitrix_se
 
             if (!$this.prop('disabled')) {
                 $this.closest('table').find('input').prop('disabled', true);
+
+                $result.css('overflow-y', 'auto')
+                    .css('overflow-x', 'auto')
+                    .css('color', 'inherit')
+                    .empty()
+                    .text('<?php echo Loc::getMessage('MARVIN255_BXMAILER_TEST_RUNNING') ?>');
+
                 $.ajax({
                     url: endpointUrl,
                     type: 'POST',
@@ -103,13 +110,9 @@ if ((!empty($save) || !empty($restore)) && $request->isPost() && check_bitrix_se
                     }
                     if ($result.width() > width) {
                         $result.css('overflow-x', 'scroll').width(width);
-                    } else {
-                        $result.css('overflow-x', 'auto');
                     }
                     if ($result.height() > 500) {
                         $result.css('overflow-y', 'scroll').height(500);
-                    } else {
-                        $result.css('overflow-y', 'auto').height('auto');
                     }
                 }).fail(function() {
                     $result.css('color', 'red')
