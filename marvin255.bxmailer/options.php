@@ -87,7 +87,7 @@ if ((!empty($save) || !empty($restore)) && $request->isPost() && check_bitrix_se
                     .css('overflow-x', 'auto')
                     .css('color', 'inherit')
                     .empty()
-                    .text('<?php echo Loc::getMessage('MARVIN255_BXMAILER_TEST_RUNNING') ?>');
+                    .text('<?php echo Loc::getMessage('MARVIN255_BXMAILER_TEST_RUNNING'); ?>');
 
                 $.ajax({
                     url: endpointUrl,
@@ -100,7 +100,7 @@ if ((!empty($save) || !empty($restore)) && $request->isPost() && check_bitrix_se
                     var width = $result.width();
                     var $message = $('<div />');
                     if (response.status) {
-                        $message.html('<b><?php echo Loc::getMessage('MARVIN255_BXMAILER_TEST_AJAX_SENDED') ?></b>');
+                        $message.html('<b><?php echo Loc::getMessage('MARVIN255_BXMAILER_TEST_AJAX_SENDED'); ?></b>');
                     } else {
                         $message.text(response.error);
                     }
@@ -117,7 +117,7 @@ if ((!empty($save) || !empty($restore)) && $request->isPost() && check_bitrix_se
                 }).fail(function() {
                     $result.css('color', 'red')
                         .empty()
-                        .text('<?php echo Loc::getMessage('MARVIN255_BXMAILER_TEST_AJAX_ERROR') ?>');
+                        .text('<?php echo Loc::getMessage('MARVIN255_BXMAILER_TEST_AJAX_ERROR'); ?>');
                 }).always(function() {
                     $this.closest('table').find('input').prop('disabled', false);
                 });
@@ -140,7 +140,7 @@ $tabControl->begin();
     ?>
         <tr>
             <td style="width: 40%;">
-                <label><?php echo Loc::getMessage('MARVIN255_BXMAILER_PREFERENCIES_CHARSET') ?>:</label>
+                <label><?php echo Loc::getMessage('MARVIN255_BXMAILER_PREFERENCIES_CHARSET'); ?>:</label>
             <td style="width: 60%;">
                 <input type="text"
                        size="50"
@@ -151,7 +151,7 @@ $tabControl->begin();
         </tr>
         <tr>
             <td style="width: 40%;">
-                <label><?php echo Loc::getMessage('MARVIN255_BXMAILER_PREFERENCIES_USE_SMTP') ?>:</label>
+                <label><?php echo Loc::getMessage('MARVIN255_BXMAILER_PREFERENCIES_USE_SMTP'); ?>:</label>
             <td style="width: 60%;">
                 <input type="hidden" name="is_smtp" value="" />
                 <input type="checkbox"
@@ -163,7 +163,7 @@ $tabControl->begin();
         </tr>
         <tr>
             <td style="width: 40%;">
-                <label><?php echo Loc::getMessage('MARVIN255_BXMAILER_PREFERENCIES_SMTP_AUTH') ?>:</label>
+                <label><?php echo Loc::getMessage('MARVIN255_BXMAILER_PREFERENCIES_SMTP_AUTH'); ?>:</label>
             <td style="width: 60%;">
                 <input type="hidden" name="smtp_auth" value="" />
                 <input type="checkbox"
@@ -175,7 +175,7 @@ $tabControl->begin();
         </tr>
         <tr>
             <td style="width: 40%;">
-                <label><?php echo Loc::getMessage('MARVIN255_BXMAILER_PREFERENCIES_SMTP_LOGIN') ?>:</label>
+                <label><?php echo Loc::getMessage('MARVIN255_BXMAILER_PREFERENCIES_SMTP_LOGIN'); ?>:</label>
             <td style="width: 60%;">
                 <input type="text"
                        size="50"
@@ -186,7 +186,7 @@ $tabControl->begin();
         </tr>
         <tr>
             <td style="width: 40%;">
-                <label><?php echo Loc::getMessage('MARVIN255_BXMAILER_PREFERENCIES_SMTP_PASSWORD') ?>:</label>
+                <label><?php echo Loc::getMessage('MARVIN255_BXMAILER_PREFERENCIES_SMTP_PASSWORD'); ?>:</label>
             <td style="width: 60%;">
                 <input type="text"
                        size="50"
@@ -197,7 +197,7 @@ $tabControl->begin();
         </tr>
         <tr>
             <td style="width: 40%;">
-                <label><?php echo Loc::getMessage('MARVIN255_BXMAILER_PREFERENCIES_SMTP_HOST') ?>:</label>
+                <label><?php echo Loc::getMessage('MARVIN255_BXMAILER_PREFERENCIES_SMTP_HOST'); ?>:</label>
             <td style="width: 60%;">
                 <input type="text"
                        size="50"
@@ -208,7 +208,7 @@ $tabControl->begin();
         </tr>
         <tr>
             <td style="width: 40%;">
-                <label><?php echo Loc::getMessage('MARVIN255_BXMAILER_PREFERENCIES_SMTP_PORT') ?>:</label>
+                <label><?php echo Loc::getMessage('MARVIN255_BXMAILER_PREFERENCIES_SMTP_PORT'); ?>:</label>
             <td style="width: 60%;">
                 <input type="text"
                        size="50"
@@ -219,7 +219,7 @@ $tabControl->begin();
         </tr>
         <tr>
             <td style="width: 40%;">
-                <label><?php echo Loc::getMessage('MARVIN255_BXMAILER_PREFERENCIES_SMTP_SECURE') ?>:</label>
+                <label><?php echo Loc::getMessage('MARVIN255_BXMAILER_PREFERENCIES_SMTP_SECURE'); ?>:</label>
             <td style="width: 60%;">
                 <select name="smtp_secure">
                     <option value="">Нет</option>
@@ -238,7 +238,7 @@ $tabControl->begin();
         <tr>
             <td style="width: 40%;">
                 <label>
-                    <?php echo Loc::getMessage('MARVIN255_BXMAILER_TEST_TO') ?>:
+                    <?php echo Loc::getMessage('MARVIN255_BXMAILER_TEST_TO'); ?>:
                 </label>
             </td>
             <td style="width: 60%;">
@@ -248,7 +248,7 @@ $tabControl->begin();
         <tr>
             <td style="width: 40%;">
                 <label>
-                    <?php echo Loc::getMessage('MARVIN255_BXMAILER_TEST_FROM') ?>:
+                    <?php echo Loc::getMessage('MARVIN255_BXMAILER_TEST_FROM'); ?>:
                 </label>
             </td>
             <td style="width: 60%;">
@@ -258,17 +258,17 @@ $tabControl->begin();
         <tr>
             <td style="width: 40%;">
                 <label>
-                    <?php echo Loc::getMessage('MARVIN255_BXMAILER_TEST_SUBJECT') ?>:
+                    <?php echo Loc::getMessage('MARVIN255_BXMAILER_TEST_SUBJECT'); ?>:
                 </label>
             </td>
             <td style="width: 60%;">
-                <input type="text" size="50" name="subject" value="<?php echo Loc::getMessage('MARVIN255_BXMAILER_TEST_SUBJECT_TEXT') ?>">
+                <input type="text" size="50" name="subject" value="<?php echo Loc::getMessage('MARVIN255_BXMAILER_TEST_SUBJECT_TEXT'); ?>">
             </td>
         </tr>
         <tr>
             <td style="width: 40%;">
                 <label>
-                    <?php echo Loc::getMessage('MARVIN255_BXMAILER_TEST_IS_HTML') ?>:
+                    <?php echo Loc::getMessage('MARVIN255_BXMAILER_TEST_IS_HTML'); ?>:
                 </label>
             </td>
             <td style="width: 60%;">
@@ -278,23 +278,23 @@ $tabControl->begin();
         <tr>
             <td style="width: 40%;">
                 <label>
-                    <?php echo Loc::getMessage('MARVIN255_BXMAILER_TEST_MESSAGE') ?>:
+                    <?php echo Loc::getMessage('MARVIN255_BXMAILER_TEST_MESSAGE'); ?>:
                 </label>
             </td>
             <td style="width: 60%;">
-                <input type="text" size="50" name="message" value="<?php echo Loc::getMessage('MARVIN255_BXMAILER_TEST_MESSAGE_TEXT') ?>">
+                <input type="text" size="50" name="message" value="<?php echo Loc::getMessage('MARVIN255_BXMAILER_TEST_MESSAGE_TEXT'); ?>">
             </td>
         </tr>
         <tr>
             <td style="width: 40%;">
                 <label>
-                    <?php echo Loc::getMessage('MARVIN255_BXMAILER_TEST_ATTACHMENT') ?>:
+                    <?php echo Loc::getMessage('MARVIN255_BXMAILER_TEST_ATTACHMENT'); ?>:
                 </label>
             </td>
             <td style="width: 60%;">
                 <input type="text" size="30" id="attachment" name="attachment" value="">
                 <button type="button" onclick="attachmentClick(); return false;">
-                    <?php echo Loc::getMessage('MARVIN255_BXMAILER_TEST_ATTACHMENT_SELECT') ?>
+                    <?php echo Loc::getMessage('MARVIN255_BXMAILER_TEST_ATTACHMENT_SELECT'); ?>
                 </button>
                 <?php
                     CAdminFileDialog::ShowScript([
@@ -319,13 +319,13 @@ $tabControl->begin();
             <td style="width: 40%;">
             </td>
             <td style="width: 60%;">
-                <input type="submit" class="js-test-sender" data-endpoint="/bitrix/admin/marvin255_bxmailer_send_test.php" value="<?php echo Loc::getMessage('MARVIN255_BXMAILER_TEST_SEND') ?>">
+                <input type="submit" class="js-test-sender" data-endpoint="/bitrix/admin/marvin255_bxmailer_send_test.php" value="<?php echo Loc::getMessage('MARVIN255_BXMAILER_TEST_SEND'); ?>">
             </td>
         </tr>
         <tr>
             <td style="width: 40%; vertical-align: top;">
                 <label>
-                    <?php echo Loc::getMessage('MARVIN255_BXMAILER_TEST_RESULT') ?>
+                    <?php echo Loc::getMessage('MARVIN255_BXMAILER_TEST_RESULT'); ?>
                 </label>
             </td>
             <td style="width: 60%;">
