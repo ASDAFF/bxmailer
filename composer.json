@@ -15,8 +15,8 @@
         }
     },
     "require-dev": {
-        "phpunit/phpunit": "<=5.0",
-        "friendsofphp/php-cs-fixer": "<2.6.0"
+        "phpunit/phpunit": "^4.0",
+        "friendsofphp/php-cs-fixer": "^2.2.0"
     },
     "repositories": [
         {
