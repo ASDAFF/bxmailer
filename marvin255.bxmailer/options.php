@@ -348,6 +348,7 @@ $tabControl->begin();
            value="<?php echo Loc::getMessage('MAIN_RESTORE_DEFAULTS'); ?>"
            />
 </form>
+
 <?php
 $tabControl->end();
 
