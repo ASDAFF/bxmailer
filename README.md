@@ -1,5 +1,7 @@
 # Bxmailer
 
+[![Latest Stable Version](https://poser.pugx.org/marvin255/bxmailer/v/stable.png)](https://packagist.org/packages/marvin255/bxmailer)
+[![License](https://poser.pugx.org/marvin255/bxmailer/license.svg)](https://packagist.org/packages/marvin255/bxmailer)
 [![Build Status](https://travis-ci.org/marvin255/bxmailer.svg?branch=master)](https://travis-ci.org/marvin255/bxmailer)
 
 Отправка почтовых сообщений через SMTP (phpMailer) для 1С-Битрикс "Управление сайтом".
