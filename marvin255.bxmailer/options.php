@@ -133,7 +133,7 @@ if ((!empty($save) || !empty($restore)) && $request->isPost() && check_bitrix_se
 $tabControl->begin();
 ?>
 
-<form method="post" action="<?php echo $APPLICATION->getCurPageParam('mid=' . urlencode($mid), ['mid']); ?>">
+<form method="post" action="<?php echo $APPLICATION->getCurPageParam('mid=' . urlencode($module_id), ['mid']); ?>">
     <?php
         echo bitrix_sessid_post();
         $tabControl->beginNextTab();
@@ -347,22 +347,18 @@ $tabControl->begin();
            onclick="return confirm('<?php echo addslashes(GetMessage('MAIN_HINT_RESTORE_DEFAULTS_WARNING')); ?>')"
            value="<?php echo Loc::getMessage('MAIN_RESTORE_DEFAULTS'); ?>"
            />
-    <?php
-        $tabControl->end();
-    ?>
 </form>
 <?php
-    echo BeginNote();
-    echo Loc::getMessage('MARVIN255_BXMAILER_SMTP');
-    echo EndNote();
-?>
-<?php
-    echo BeginNote();
-    echo Loc::getMessage('MARVIN255_BXMAILER_PRESENTED_BY_PHPMAILER');
-    echo EndNote();
-?>
-<?php
-    if ($isConfigComplete) {
-        LocalRedirect($APPLICATION->getCurPageParam('mid=' . urlencode($mid), ['mid']));
-    }
-?>
+$tabControl->end();
+
+echo BeginNote();
+echo Loc::getMessage('MARVIN255_BXMAILER_SMTP');
+echo EndNote();
+
+echo BeginNote();
+echo Loc::getMessage('MARVIN255_BXMAILER_PRESENTED_BY_PHPMAILER');
+echo EndNote();
+
+if ($isConfigComplete) {
+    LocalRedirect($APPLICATION->getCurPageParam('mid=' . urlencode($module_id), ['mid']));
+}
