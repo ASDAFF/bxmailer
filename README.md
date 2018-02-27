@@ -50,7 +50,7 @@
     composer update
     ```
 
-4. Если пункт 2 не выполнен, то скопируйте папку `vendor/marvin255/bxfoundation/marvin255.bxmailer` в папку `local/modules` вашего проекта. А папку `vendor/phpmailer/phpmailer` в папку `local/modules/marvin255.bxmailer/phpmailer`.
+4. Если пункт 2 не выполнен, то скопируйте папку `vendor/marvin255/bxmailer/marvin255.bxmailer` в папку `local/modules` вашего проекта. А папку `vendor/phpmailer/phpmailer` в папку `local/modules/marvin255.bxmailer/phpmailer`.
 
 5. Установите модуль в административном разделе 1С-Битрикс "Управление сайтом".
 
@@ -59,7 +59,7 @@
 **Обычная**
 
 1. Скачайте архив с репозиторием.
-2. Скопируйте папку `vendor/marvin255/bxfoundation/marvin255.bxmailer` в папку `local/modules` вашего проекта. А папку `vendor/phpmailer/phpmailer` в папку `local/modules/marvin255.bxmailer/phpmailer`.
+2. Скопируйте папку `marvin255.bxmailer` в папку `local/modules` вашего проекта. А папку `vendor/phpmailer/phpmailer` в папку `local/modules/marvin255.bxmailer/phpmailer`.
 3. Установите модуль в административном разделе 1С-Битрикс "Управление сайтом".
 4. Добавьте строку `\Bitrix\Main\Loader::includeModule('marvin255.bxmailer');` в `init.php` вашего сайта.
 
