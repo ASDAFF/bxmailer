@@ -107,7 +107,7 @@ class marvin255_bxmailer extends CModule
      */
     public function unInstallFiles()
     {
-        CopyDirFiles(
+        DeleteDirFiles(
             $this->getInstallatorPath() . '/admin',
             Application::getDocumentRoot() . '/bitrix/admin'
         );
