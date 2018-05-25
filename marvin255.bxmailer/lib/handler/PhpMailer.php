@@ -52,14 +52,15 @@ class PhpMailer implements HandlerInterface, HandlerDebugInterface
     {
         $return = false;
 
+        $this->setHandlerSettings($this->mailer, $this->options);
+        $this->setMessageSettings($this->mailer, $message);
+
         if (function_exists('mb_internal_encoding') && ((int) ini_get('mbstring.func_overload')) & 2) {
             $mbEncoding = mb_internal_encoding();
             mb_internal_encoding('ASCII');
         }
 
         try {
-            $this->setHandlerSettings($this->mailer, $this->options);
-            $this->setMessageSettings($this->mailer, $message);
             $return = $this->mailer->send();
         } catch (\PHPMailer\PHPMailer\Exception $e) {
             $return = false;
